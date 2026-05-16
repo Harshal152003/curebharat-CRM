@@ -7,7 +7,6 @@ export async function POST() {
   try {
     await dbConnect();
 
-    // Check if admin already exists
     const existing = await User.findOne({ email: 'admin@curebharat.com' });
     if (existing) {
       return NextResponse.json(
