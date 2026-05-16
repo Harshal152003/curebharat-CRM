@@ -59,6 +59,23 @@ export async function POST(request: Request) {
     await dbConnect();
 
     const body = await request.json();
+    
+    // Check for existing email or phone
+    const existing = await Customer.findOne({
+      $or: [
+        { email: body.email },
+        { phone: body.phone }
+      ]
+    });
+
+    if (existing) {
+      const field = existing.email === body.email ? 'Email' : 'Phone number';
+      return NextResponse.json(
+        { success: false, error: `${field} already exists in the system` },
+        { status: 400 }
+      );
+    }
+
     const customer = await Customer.create(body);
 
     return NextResponse.json(

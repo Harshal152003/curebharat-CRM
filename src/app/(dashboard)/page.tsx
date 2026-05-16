@@ -9,7 +9,9 @@ import {
   HiOutlineTrendingUp,
   HiOutlineClock,
   HiOutlineChartBar,
+  HiOutlineX,
 } from 'react-icons/hi';
+import { AnimatePresence } from 'framer-motion';
 
 interface DashboardStats {
   totalCustomers: number;
@@ -39,6 +41,8 @@ export default function DashboardPage() {
     activeCustomers: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [selectedStat, setSelectedStat] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchStats();
@@ -102,6 +106,7 @@ export default function DashboardPage() {
   ];
 
   return (
+    <>
     <motion.div
       className="dashboard-page"
       variants={containerVariants}
@@ -125,10 +130,15 @@ export default function DashboardPage() {
           return (
             <motion.div
               key={card.label}
-              className="glass-card stat-card"
+              className="glass-card stat-card cursor-pointer"
               variants={itemVariants}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, translateY: -5 }}
+              whileTap={{ scale: 0.98 }}
               transition={{ type: 'spring', stiffness: 300 }}
+              onClick={() => {
+                setSelectedStat(card);
+                setIsModalOpen(true);
+              }}
             >
               <div className="stat-card-header">
                 <div
@@ -218,5 +228,91 @@ export default function DashboardPage() {
         </motion.div>
       </div>
     </motion.div>
+    
+    {/* Stat Detail Modal - MOVED OUTSIDE ANIMATED CONTAINER & FORCED WITH INLINE STYLES */}
+    <AnimatePresence>
+      {isModalOpen && selectedStat && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', pointerEvents: 'none' }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', pointerEvents: 'auto' }}
+            onClick={() => setIsModalOpen(false)}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="modal-content"
+            style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto', background: 'white', borderRadius: '24px', width: '100%', maxWidth: '600px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
+          >
+            <div 
+              className="modal-header"
+              style={{ padding: '30px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: selectedStat.gradient, color: 'white' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <div style={{ padding: '10px', background: 'rgba(255,255,255,0.2)', borderRadius: '12px' }}>
+                  <selectedStat.icon size={28} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '24px', fontWeight: '800', margin: 0 }}>{selectedStat.label}</h2>
+                  <p style={{ opacity: 0.8, fontSize: '12px', margin: 0 }}>CureBharat Intelligence Overview</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', padding: '8px', cursor: 'pointer', color: 'white' }}
+              >
+                <HiOutlineX size={24} />
+              </button>
+            </div>
+            
+            <div style={{ padding: '30px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
+                <div style={{ padding: '20px', background: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                  <span style={{ fontSize: '10px', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px' }}>Current Count</span>
+                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#0f172a' }}>{selectedStat.value}</div>
+                </div>
+                <div style={{ padding: '20px', background: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                  <span style={{ fontSize: '10px', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px' }}>Monthly Growth</span>
+                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#10b981' }}>{selectedStat.change}</div>
+                </div>
+              </div>
+
+              <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <HiOutlineChartBar size={16} />
+                Activity Timeline
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '15px', background: 'white', borderRadius: '15px', border: '1px solid #f1f5f9' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(13, 124, 62, 0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0d7c3e', fontWeight: '800' }}>{i}</div>
+                      <div>
+                        <p style={{ margin: 0, fontSize: '14px', fontWeight: '700' }}>Automated Audit Check {i}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#94a3b8' }}>Sync ID: #9822{i} • Verified 10:30 AM</p>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '10px', fontWeight: '700', color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', padding: '4px 10px', borderRadius: '20px' }}>SUCCESS</span>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  style={{ background: '#0f172a', color: 'white', border: 'none', borderRadius: '12px', padding: '12px 30px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                >
+                  Close Overview
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }

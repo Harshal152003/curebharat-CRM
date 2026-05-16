@@ -12,6 +12,7 @@ import {
   HiOutlineEye,
   HiOutlineChevronLeft,
   HiOutlineChevronRight,
+  HiOutlineMail,
 } from 'react-icons/hi';
 import { ICustomer } from '@/types';
 
@@ -23,7 +24,22 @@ export default function CustomersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [sendingEmail, setSendingEmail] = useState<string | null>(null);
+  const [templates, setTemplates] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const res = await fetch('/api/templates');
+        const data = await res.json();
+        if (data.success) setTemplates(data.data);
+      } catch (err) {
+        console.error('Failed to fetch templates:', err);
+      }
+    };
+    fetchTemplates();
+  }, []);
 
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
@@ -63,6 +79,37 @@ export default function CustomersPage() {
       console.error('Delete failed:', error);
     }
     setDeleteId(null);
+  };
+
+  const handleSendEmail = async (customer: ICustomer) => {
+    if (!templates.length) {
+      alert('No templates available to send');
+      return;
+    }
+
+    setSendingEmail(customer._id!);
+    try {
+      const res = await fetch('/api/pdf/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerId: customer._id,
+          templateId: templates[0]._id, // Use first template as default
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert('Certificate sent successfully to ' + customer.email);
+      } else {
+        alert('Failed to send email: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Email send error:', error);
+      alert('An error occurred while sending the email');
+    } finally {
+      setSendingEmail(null);
+    }
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -175,6 +222,19 @@ export default function CustomersPage() {
                     </td>
                     <td>
                       <div className="action-btns">
+                         <button
+                          className="btn btn-icon btn-ghost"
+                          title="Send Email"
+                          onClick={() => handleSendEmail(customer)}
+                          disabled={sendingEmail === customer._id}
+                          style={{ color: sendingEmail === customer._id ? 'var(--foreground-dim)' : 'var(--brand-primary)' }}
+                        >
+                          {sendingEmail === customer._id ? (
+                            <span className="spinner-small" />
+                          ) : (
+                            <HiOutlineMail size={16} />
+                          )}
+                        </button>
                         <button
                           className="btn btn-icon btn-ghost"
                           title="View"
@@ -370,6 +430,18 @@ export default function CustomersPage() {
         .pagination-info {
           font-size: 13px;
           color: var(--foreground-dim);
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        .spinner-small {
+          width: 14px;
+          height: 14px;
+          border: 2px solid rgba(0, 0, 0, 0.1);
+          border-top-color: var(--brand-primary);
+          border-radius: 50%;
+          animation: spin 0.6s linear infinite;
         }
       `}</style>
     </motion.div>
