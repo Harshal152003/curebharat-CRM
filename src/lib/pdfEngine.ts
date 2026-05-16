@@ -1,12 +1,17 @@
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import chromium from '@sparticuz/chromium-min';
 
 export async function generatePdfFromHtml(html: string): Promise<Buffer> {
   const isProd = process.env.NODE_ENV === 'production';
   
   // Use a local chrome path if not in production
-  // Note: Adjust this path to your local Chrome installation if needed
   const localChromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+
+  // For Vercel, we use @sparticuz/chromium-min with a fallback URL to ensure it always works
+  // even if the local bin folder is missing after bundling.
+  const executablePath = isProd 
+    ? await chromium.executablePath('https://github.com/Sparticuz/chromium/releases/download/v132.0.0/chromium-v132.0.0-pack.tar') 
+    : localChromePath;
 
   const browser = await puppeteer.launch({
     args: isProd ? chromium.args : [
@@ -15,9 +20,7 @@ export async function generatePdfFromHtml(html: string): Promise<Buffer> {
       '--disable-dev-shm-usage',
       '--disable-gpu',
     ],
-    executablePath: isProd 
-      ? await chromium.executablePath() 
-      : localChromePath,
+    executablePath,
     headless: true,
   });
 
