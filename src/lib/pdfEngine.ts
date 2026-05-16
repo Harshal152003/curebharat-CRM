@@ -1,37 +1,24 @@
 import puppeteer from 'puppeteer';
-import puppeteerCore from 'puppeteer-core';
-import chromium from '@sparticuz/chromium-min';
 
 export async function generatePdfFromHtml(html: string): Promise<Buffer> {
-  let browser;
-
-  // Detect if running on Vercel/Production or Local Development
-  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-    browser = await puppeteerCore.launch({
-      args: chromium.args,
-      defaultViewport: { width: 1920, height: 1080 },
-      executablePath: await chromium.executablePath(
-        'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
-      ),
-      headless: true,
-    });
-  } else {
-    browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-      ],
-    });
-  }
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+    ],
+  });
 
   try {
     const page = await browser.newPage();
 
+    // Set viewport to match A4 at 96dpi
+    await page.setViewport({ width: 794, height: 1123 });
+
     await page.setContent(html, {
-      waitUntil: 'domcontentloaded',
+      waitUntil: 'networkidle0',
       timeout: 30000,
     });
 

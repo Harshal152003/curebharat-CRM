@@ -71,6 +71,7 @@ const ComponentStyleSchema = new Schema(
     margin: String,
     borderRadius: String,
     border: String,
+    borderCollapse: String,
     boxShadow: String,
     opacity: Number,
     zIndex: Number,
@@ -123,6 +124,14 @@ const SectionStyleSchema = new Schema(
     minHeight: String,
     maxWidth: String,
     boxShadow: String,
+    height: String,
+    width: String,
+    position: String,
+    overflow: String,
+    display: String,
+    flexDirection: String,
+    justifyContent: String,
+    alignItems: String,
   },
   { _id: false }
 );

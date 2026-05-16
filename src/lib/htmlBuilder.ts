@@ -16,6 +16,7 @@ export function compilePlaceholders(text: string, customer: ICustomer): string {
     '{{plan_name}}': customer.planName || '',
     '{{plan_start}}': customer.planStart || '',
     '{{plan_end}}': customer.planEnd || '',
+    '{{plan_price}}': customer.coveragePrice?.toString() || '',
     '{{coverage_price}}': customer.coveragePrice?.toString() || '',
     '{{members_covered}}': customer.membersCovered?.toString() || '',
     '{{coverage_details}}': customer.coverageDetails || '',
@@ -35,14 +36,7 @@ export function buildPageHtml(page: ITemplatePage, customer: ICustomer, pageNum:
   const footerHtml = page.showGlobalFooter && page.footer?.enabled ? buildFooter(page, pageNum, totalPages) : '';
   const contentHtml = page.sections.map((s) => buildSection(s, customer)).join('');
 
-  return `
-    <div class="pdf-page" style="${bgCss}">
-      ${watermarkHtml}
-      ${headerHtml}
-      <div class="pdf-content">${contentHtml}</div>
-      ${footerHtml}
-    </div>
-  `;
+  return `<div class="pdf-page" style="${bgCss}">${watermarkHtml}${headerHtml}<div class="pdf-content">${contentHtml}</div>${footerHtml}</div>`;
 }
 
 function buildBackgroundCss(page: ITemplatePage): string {
@@ -94,7 +88,7 @@ function buildFooter(page: ITemplatePage, pageNum: number, totalPages: number): 
 function buildSection(section: ISection, customer: ICustomer): string {
   const gridCss = section.layout === 'two-column' ? 'display: grid; grid-template-columns: 1fr 1fr; gap: 12px;'
     : section.layout === 'three-column' ? 'display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;'
-    : '';
+      : '';
 
   const styleCss = Object.entries((section.style || {}) as Record<string, string>).filter(([, v]) => v).map(([k, v]) => `${toKebab(k)}: ${v}`).join('; ');
 
@@ -125,11 +119,11 @@ function buildComponent(comp: IComponent, customer: ICustomer): string {
       const hBg = props.headerBg || '#1a5c2e';
       const hColor = props.headerColor || '#fff';
       let html = `<table style="width: 100%; border-collapse: collapse; font-size: 12px; ${styleCss}"><thead><tr>`;
-      headers.forEach((h: string) => { html += `<th style="padding: 8px 12px; background: ${hBg}; color: ${hColor}; text-align: left; font-weight: 600;">${compilePlaceholders(h, customer)}</th>`; });
+      headers.forEach((h: string) => { html += `<th style="padding: 10px 14px; background: ${hBg}; color: ${hColor}; text-align: left; font-weight: 600; border: 1px solid ${hBg};">${compilePlaceholders(h, customer)}</th>`; });
       html += '</tr></thead><tbody>';
       rows.forEach((row: string[], ri: number) => {
         html += `<tr style="background: ${ri % 2 === 0 ? '#f8f9fa' : '#fff'}">`;
-        row.forEach((cell: string) => { html += `<td style="padding: 8px 12px; border-bottom: 1px solid #e9ecef;">${compilePlaceholders(cell, customer)}</td>`; });
+        row.forEach((cell: string) => { html += `<td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">${compilePlaceholders(cell, customer)}</td>`; });
         html += '</tr>';
       });
       html += '</tbody></table>';
@@ -162,34 +156,39 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
 <head>
 <meta charset="UTF-8">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
-    font-family: 'Inter', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 210mm;
+    font-family: 'Inter', 'Outfit', Arial, sans-serif;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
 
-  @page { size: A4; margin: 0; }
+  @page {
+    size: A4;
+    margin: 0;
+  }
 
   .pdf-page {
     width: 210mm;
-    min-height: 297mm;
+    height: 297mm;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     page-break-after: always;
-    break-after: page;
+    page-break-inside: avoid;
     color: #333;
   }
 
   .pdf-page:last-child {
     page-break-after: auto;
-    break-after: auto;
   }
 
   .pdf-watermark {
@@ -202,6 +201,7 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
   }
 
   .pdf-header {
+    flex-shrink: 0;
     position: relative;
     z-index: 2;
     border-bottom: 2px solid rgba(0,0,0,0.08);
@@ -211,15 +211,36 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
     flex: 1;
     position: relative;
     z-index: 1;
-    padding: 16px 24px;
+    overflow: hidden;
   }
 
   .pdf-footer {
+    flex-shrink: 0;
     position: relative;
     z-index: 2;
     border-top: 2px solid rgba(0,0,0,0.08);
-    margin-top: auto;
   }
+
+  /* --- Certificate Field Row --- */
+  .cb-field { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; }
+  .cb-icon { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; background: #0B5D2A; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .cb-icon svg { width: 11px; height: 11px; fill: white; }
+  .cb-icon.orange { background: #E8742A; }
+  .cb-lbl { font-size: 11.5px; color: #333; white-space: nowrap; padding-top: 2px; }
+  .cb-sep { font-size: 11.5px; color: #333; padding-top: 2px; margin: 0 6px; font-weight: 700; }
+  .cb-val { font-size: 12.5px; font-weight: 700; color: #1a1a1a; padding-top: 1px; }
+
+  /* --- Section Header Bar --- */
+  .cb-section-hdr { background: #0B5D2A; color: white; padding: 8px 16px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; border-radius: 10px 10px 0 0; letter-spacing: 0.5px; }
+  .cb-section-hdr .hdr-icon { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; }
+  .cb-section-hdr .hdr-icon svg { width: 14px; height: 14px; fill: white; }
+
+  /* --- Tricolor Strips --- */
+  .tricolor-l { position: absolute; left: 0; top: 0; bottom: 0; width: 18px; display: flex; z-index: 5; }
+  .tricolor-r { position: absolute; right: 0; top: 0; bottom: 0; width: 18px; display: flex; z-index: 5; }
+  .tc-green { background: #138808; flex: 1; }
+  .tc-white { background: #FFFFFF; flex: 0.7; }
+  .tc-saffron { background: #FF9933; flex: 1; }
 </style>
 </head>
 <body>${pagesHtml}</body>
