@@ -1,14 +1,24 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium-min';
 
 export async function generatePdfFromHtml(html: string): Promise<Buffer> {
+  const isProd = process.env.NODE_ENV === 'production';
+  
+  // Use a local chrome path if not in production
+  // Note: Adjust this path to your local Chrome installation if needed
+  const localChromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+
   const browser = await puppeteer.launch({
-    headless: true,
-    args: [
+    args: isProd ? chromium.args : [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
       '--disable-gpu',
     ],
+    executablePath: isProd 
+      ? await chromium.executablePath() 
+      : localChromePath,
+    headless: true,
   });
 
   try {
