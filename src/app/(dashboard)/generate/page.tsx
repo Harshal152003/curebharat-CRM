@@ -14,6 +14,8 @@ export default function GeneratePage() {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [canSendEmail, setCanSendEmail] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   useEffect(() => {
     fetch('/api/customers?limit=1000').then(r => r.json()).then(d => {
@@ -32,6 +34,7 @@ export default function GeneratePage() {
     setGenerating(true);
     setError('');
     setSuccess('');
+    setCanSendEmail(false);
 
     try {
       const res = await fetch('/api/pdf/generate', {
@@ -49,6 +52,7 @@ export default function GeneratePage() {
         a.click();
         URL.revokeObjectURL(url);
         setSuccess('PDF generated and downloaded successfully!');
+        setCanSendEmail(true);
       } else {
         const data = await res.json();
         setError(data.error || 'PDF generation failed');
@@ -57,6 +61,32 @@ export default function GeneratePage() {
       setError('Failed to generate PDF: ' + (err instanceof Error ? err.message : 'Unknown error'));
     }
     setGenerating(false);
+  };
+
+  const handleSendEmail = async () => {
+    if (!selectedCustomer || !selectedTemplate) return;
+    setSendingEmail(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await fetch('/api/pdf/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: selectedCustomer, templateId: selectedTemplate })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccess('PDF successfully sent to customer\'s email!');
+        setCanSendEmail(false); // Hide the button after successful sending
+      } else {
+        setError(data.error || 'Failed to send email');
+      }
+    } catch (err) {
+      setError('Failed to send email: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+      setSendingEmail(false);
+    }
   };
 
   return (
@@ -85,7 +115,7 @@ export default function GeneratePage() {
           <label className="input-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <HiOutlineUsers size={14} /> Select Customer
           </label>
-          <select className="input" value={selectedCustomer} onChange={(e) => setSelectedCustomer(e.target.value)}>
+          <select className="input" value={selectedCustomer} onChange={(e) => { setSelectedCustomer(e.target.value); setCanSendEmail(false); }}>
             <option value="">— Choose a customer —</option>
             {customers.map((c) => (
               <option key={c._id} value={c._id}>{c.name}</option>
@@ -98,7 +128,7 @@ export default function GeneratePage() {
           <label className="input-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <HiOutlineTemplate size={14} /> Select Template
           </label>
-          <select className="input" value={selectedTemplate} onChange={(e) => setSelectedTemplate(e.target.value)}>
+          <select className="input" value={selectedTemplate} onChange={(e) => { setSelectedTemplate(e.target.value); setCanSendEmail(false); }}>
             <option value="">— Choose a template —</option>
             {templates.map((t) => (
               <option key={t._id} value={t._id}>{t.name}</option>
@@ -119,6 +149,37 @@ export default function GeneratePage() {
             </>
           )}
         </button>
+
+        {canSendEmail && (
+          <button
+            className="btn btn-secondary btn-lg"
+            style={{
+              width: '100%',
+              marginTop: 16,
+              background: 'linear-gradient(135deg, #0B5D2A, #2F6B3C)',
+              borderColor: '#0B5D2A',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8
+            }}
+            onClick={handleSendEmail}
+            disabled={sendingEmail}
+          >
+            {sendingEmail ? (
+              <>
+                <span style={{ width: 18, height: 18, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.6s linear infinite', display: 'inline-block' }} />
+                Sending Email to Customer...
+              </>
+            ) : (
+              <>
+                <HiOutlineDocumentDownload size={20} style={{ transform: 'rotate(180deg)' }} />
+                Send Generated PDF to Customer Email
+              </>
+            )}
+          </button>
+        )}
       </div>
     </motion.div>
   );

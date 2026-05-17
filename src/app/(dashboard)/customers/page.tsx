@@ -222,19 +222,6 @@ export default function CustomersPage() {
                     </td>
                     <td>
                       <div className="action-btns">
-                         <button
-                          className="btn btn-icon btn-ghost"
-                          title="Send Email"
-                          onClick={() => handleSendEmail(customer)}
-                          disabled={sendingEmail === customer._id}
-                          style={{ color: sendingEmail === customer._id ? 'var(--foreground-dim)' : 'var(--brand-primary)' }}
-                        >
-                          {sendingEmail === customer._id ? (
-                            <span className="spinner-small" />
-                          ) : (
-                            <HiOutlineMail size={16} />
-                          )}
-                        </button>
                         <button
                           className="btn btn-icon btn-ghost"
                           title="View"
