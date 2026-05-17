@@ -50,7 +50,7 @@ export async function removeAuthCookie(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
-
+//sample
 export async function getCurrentUser(): Promise<IAuthToken | null> {
   const token = await getAuthCookie();
   if (!token) return null;
