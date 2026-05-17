@@ -28,8 +28,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Template not found' }, { status: 404 });
     }
 
-    // Build HTML from template + customer data
-    const html = buildFullHtml(template.pages || [], customer as unknown as import('@/types').ICustomer);
+    // Build HTML from template + customer data (override/ensure planName matches the selected template)
+    const customerData = {
+      ...(customer as any),
+      planName: template.name || customer.planName || ''
+    };
+
+    const html = buildFullHtml(template.pages || [], customerData as unknown as import('@/types').ICustomer);
 
     // Generate PDF
     const pdfBuffer = await generatePdfFromHtml(html);
