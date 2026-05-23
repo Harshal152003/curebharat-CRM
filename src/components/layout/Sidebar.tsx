@@ -40,9 +40,17 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
     >
       {/* Brand */}
       <div className="sidebar-brand">
-        <div className="sidebar-logo">
-          <HiOutlineShieldCheck size={24} />
-        </div>
+        <img 
+          src="/chatbot-icon.png" 
+          alt="CureBharat" 
+          style={{ 
+            width: '36px', 
+            height: '36px', 
+            objectFit: 'contain', 
+            flexShrink: 0,
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+          }} 
+        />
         <AnimatePresence>
           {!collapsed && (
             <motion.div

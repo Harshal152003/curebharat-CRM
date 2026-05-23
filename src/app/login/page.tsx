@@ -62,8 +62,9 @@ export default function LoginPage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', boxShadow: 'none' }}
             >
-              <HiOutlineShieldCheck size={40} />
+              <img src="/chatbot-icon.png" alt="CureBharat" style={{ width: 80, height: 80, objectFit: 'contain', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))' }} />
             </motion.div>
             <h1 className="login-title">CureBharat</h1>
             <p className="login-subtitle">Enterprise CRM Platform</p>

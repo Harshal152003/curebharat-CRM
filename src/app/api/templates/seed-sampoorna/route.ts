@@ -70,7 +70,7 @@ export async function POST() {
           <!-- Title -->
           <div style="max-width: 500px;">
             <div style="color: #F07A1F; font-family: 'Inter', sans-serif; font-size: 64px; font-weight: 800; line-height: 1.1; margin-bottom: 10px;">CureBharat</div>
-            <div style="color: #0B5D2A; font-family: 'Inter', sans-serif; font-size: 64px; font-weight: 800; line-height: 1.1; margin-bottom: 25px;">{{plan_name}}</div>
+            <div style="color: #0B5D2A; font-family: 'Inter', sans-serif; font-size: 44px; font-weight: 800; line-height: 1.2; margin-bottom: 25px; text-transform: uppercase;">Sampoorna Suraksha</div>
             <div style="height: 5px; width: 120px; background: linear-gradient(to right, #F07A1F, rgba(240,122,31,0)); border-radius: 2px;"></div>
           </div>
         </div>
