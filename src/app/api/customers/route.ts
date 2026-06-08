@@ -60,16 +60,21 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    // Check for existing email or phone
+    // Check for existing email, phone, or memberId
     const existing = await Customer.findOne({
       $or: [
         { email: body.email },
-        { phone: body.phone }
+        { phone: body.phone },
+        { memberId: body.memberId }
       ]
     });
 
     if (existing) {
-      const field = existing.email === body.email ? 'Email' : 'Phone number';
+      let field = 'A record';
+      if (existing.email === body.email) field = 'Email';
+      else if (existing.phone === body.phone) field = 'Phone number';
+      else if (existing.memberId === body.memberId) field = 'Member ID';
+      
       return NextResponse.json(
         { success: false, error: `${field} already exists in the system` },
         { status: 400 }

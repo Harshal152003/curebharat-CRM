@@ -74,16 +74,17 @@ export async function POST(request: Request) {
       port: parseInt(process.env.SMTP_PORT || '587'),
       secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
       auth: {
-        user: process.env.SMTP_USER, // your email
-        pass: process.env.SMTP_PASS, // your app password
+        user: process.env.EMAIL_USER || process.env.SMTP_USER, // Check both for compatibility
+        pass: process.env.EMAIL_PASS || process.env.SMTP_PASS, // Check both
       },
     });
 
     const fileName = `${customer.memberName.replace(/\s+/g, '-')}_Certificate.pdf`;
+    const senderEmail = process.env.SENDER_EMAIL || process.env.EMAIL_USER || process.env.SMTP_USER;
 
     // 4. Send Email
     const info = await transporter.sendMail({
-      from: `"${process.env.NEXT_PUBLIC_APP_NAME || 'CureBharat'}" <${process.env.SMTP_USER}>`,
+      from: `"${process.env.NEXT_PUBLIC_APP_NAME || 'CureBharat'}" <${senderEmail}>`,
       to: customer.email,
       subject: `Your ${template.name} Certificate from CureBharat`,
       text: `Hello ${customer.memberName},\n\nPlease find your generated ${template.name} certificate attached to this email.\n\nBest regards,\nCureBharat Team`,
