@@ -32,8 +32,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Customer does not have an email address' }, { status: 400 });
     }
 
+    // --- FETCH KYC DATA FROM GBM BACKEND ---
+    let gbmKycData: any = {};
+    try {
+      const gbmApiUrl = process.env.GBM_BACKEND_URL || 'https://gbm-cure-bharat-backend.vercel.app';
+      const kycResponse = await fetch(`${gbmApiUrl}/api/public/kyc/policy/${customer.memberId}`);
+      if (kycResponse.ok) {
+        const kycJson = await kycResponse.json();
+        if (kycJson.success && kycJson.data && kycJson.data.kycData) {
+          const kyc = kycJson.data.kycData;
+          gbmKycData = {
+            gender: kyc.gender || customer.gender,
+            dob: kyc.dob || customer.dob,
+            address: `${kyc.addressLine1 || ''} ${kyc.addressLine2 || ''} ${kyc.city || ''} ${kyc.state || ''} ${kyc.pincode || ''}`.trim().replace(/\s+/g, ' ') || customer.address,
+            nomineeName: kyc.nomineeName || customer.nomineeName,
+            nomineeDob: kyc.nomineeDOB || customer.nomineeDob,
+            relationship: kyc.nomineeRelation || customer.relationship,
+          };
+        }
+      }
+    } catch (err) {
+      console.error('[Generate PDF] Error fetching GBM KYC data:', err);
+    }
+
+    const customerData = {
+      ...(customer as any),
+      planName: template.name || customer.planName || '',
+      ...gbmKycData
+    };
+
     // 1. Build HTML from template + customer data
-    const html = buildFullHtml(template.pages || [], customer as any);
+    const html = buildFullHtml(template.pages || [], customerData as unknown as import('@/types').ICustomer);
 
     // 2. Generate PDF
     const pdfBuffer = await generatePdfFromHtml(html);
