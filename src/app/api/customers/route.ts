@@ -60,14 +60,16 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    // Check for existing email, phone, or memberId
-    const existing = await Customer.findOne({
-      $or: [
-        { email: body.email },
-        { phone: body.phone },
-        { memberId: body.memberId }
-      ]
-    });
+    // Check for existing email, phone, or memberId, ignoring N/A defaults
+    const orConditions = [];
+    if (body.email && body.email !== 'N/A') orConditions.push({ email: body.email });
+    if (body.phone && body.phone !== 'N/A') orConditions.push({ phone: body.phone });
+    if (body.memberId && body.memberId !== 'N/A') orConditions.push({ memberId: body.memberId });
+
+    let existing = null;
+    if (orConditions.length > 0) {
+      existing = await Customer.findOne({ $or: orConditions });
+    }
 
     if (existing) {
       let field = 'A record';

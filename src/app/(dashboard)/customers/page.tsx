@@ -15,6 +15,7 @@ import {
   HiOutlineMail,
   HiOutlineUpload,
 } from 'react-icons/hi';
+import * as XLSX from 'xlsx';
 import { ICustomer } from '@/types';
 
 export default function CustomersPage() {
@@ -225,58 +226,184 @@ export default function CustomersPage() {
 
     const reader = new FileReader();
     reader.onload = async (evt) => {
-      const text = evt.target?.result as string;
-      const lines = text.split('\n').filter(l => l.trim() !== '');
-      if (lines.length < 2) return alert('Invalid or empty CSV file');
-
-      // simple CSV parser regex
-      const parseCsvLine = (line: string) => {
-        return line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
-      };
-
-      const headers = parseCsvLine(lines[0]);
-
-      let successCount = 0;
-      let failCount = 0;
-
-      for (let i = 1; i < lines.length; i++) {
-        const values = parseCsvLine(lines[i]);
-        if (values.length !== headers.length) continue;
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws, { raw: false });
         
-        const customerData: any = {};
-        headers.forEach((h, index) => {
-          customerData[h] = values[index];
-        });
+        if (data.length === 0) return alert('Invalid or empty file');
 
-        // Set default values if missing
-        customerData.status = customerData.status || 'active';
-        customerData.memberId = customerData.memberId || `CB-IMP-${Date.now()}-${i}`;
-        customerData.gender = customerData.gender || 'Male';
+        // Remove the strict header check
+        let successCount = 0;
+        let failCount = 0;
+        let missingReport: string[] = [];
 
-        // Clean up numeric fields (like coveragePrice) if they contain formatting like $ or commas
-        if (customerData.coveragePrice) {
-          customerData.coveragePrice = customerData.coveragePrice.toString().replace(/[^0-9.]/g, '');
-        }
-        if (customerData.membersCovered) {
-          customerData.membersCovered = customerData.membersCovered.toString().replace(/[^0-9]/g, '');
-        }
+        const aliasMap: Record<string, string> = {
+          customerid: 'memberId', id: 'memberId',
+          name: 'memberName', customername: 'memberName', fullname: 'memberName', membername: 'memberName',
+          contact: 'phone', contactnumber: 'phone', mobile: 'phone', phone: 'phone', phonenumber: 'phone', customercontactnumber: 'phone',
+          emailaddress: 'email', email: 'email', mail: 'email', emailid: 'email', customeremailid: 'email',
+          address: 'address', location: 'address', city: 'address',
+          dateofbirth: 'dob', birthdate: 'dob', dob: 'dob',
+          gender: 'gender', sex: 'gender',
+          plan: 'planName', planname: 'planName', package: 'planName', policy: 'planName',
+          startdate: 'planStart', planstart: 'planStart', start: 'planStart',
+          enddate: 'planEnd', planend: 'planEnd', expiry: 'planEnd',
+          price: 'coveragePrice', coverageprice: 'coveragePrice', amount: 'coveragePrice', fee: 'coveragePrice',
+          nominee: 'nomineeName', nomineename: 'nomineeName', nominee1nomineesname: 'nomineeName',
+          nomineerelation: 'relationship', relationship: 'relationship', relation: 'relationship', nominee1nomineesrelationshipwithcustomer: 'relationship',
+          nomineedob: 'nomineeDob', nominee1nomineesdob: 'nomineeDob',
+          nomineegender: 'nomineeGender', nominee1nomineesgender: 'nomineeGender',
+          members: 'membersCovered', memberscovered: 'membersCovered'
+        };
 
-        try {
-          const res = await fetch('/api/customers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(customerData)
+        let lastErrorMsg = '';
+
+        for (let i = 0; i < data.length; i++) {
+          const rawData: any = data[i];
+          const customerData: any = {};
+          let addressParts: string[] = [];
+          let nomineeNameParts: string[] = [];
+          
+          // Smart Normalize keys
+          Object.keys(rawData).forEach(key => {
+            let normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+            let mappedKey = aliasMap[normalizedKey] || normalizedKey;
+            customerData[mappedKey] = rawData[key];
+
+            // Auto-concatenate multiple address columns
+            if (normalizedKey.includes('address') || normalizedKey.includes('city') || normalizedKey.includes('state') || normalizedKey.includes('pincode')) {
+              addressParts.push(String(rawData[key]).trim());
+            }
+            
+            // Auto-concatenate nominee first name and last name
+            if (normalizedKey.includes('nomineesfirstname') || normalizedKey.includes('nomineessurname')) {
+              nomineeNameParts.push(String(rawData[key]).trim());
+            }
           });
-          if (res.ok) successCount++;
-          else failCount++;
-        } catch(e) {
-          failCount++;
+
+          if (addressParts.length > 0) {
+            customerData.address = addressParts.filter(Boolean).join(', ');
+          }
+          if (nomineeNameParts.length > 0) {
+            customerData.nomineeName = nomineeNameParts.filter(Boolean).join(' ');
+          }
+
+          // Check for missing required fields BEFORE applying defaults
+          const requiredFields = ['memberName', 'phone', 'email', 'dob', 'address', 'planName', 'planStart', 'planEnd', 'coveragePrice', 'nomineeName', 'nomineeDob', 'relationship'];
+          const missing = requiredFields.filter(f => !customerData[f]);
+          if (missing.length > 0) {
+            missingReport.push(`Row ${i + 2} (${customerData.memberName || 'Unknown'}): missing ${missing.join(', ')}`);
+          }
+
+          // Fix Enums for Gender
+          if (customerData.gender) {
+            const g = customerData.gender.toString().toLowerCase();
+            customerData.gender = g.startsWith('f') ? 'Female' : g.startsWith('m') ? 'Male' : 'Other';
+          } else {
+            customerData.gender = 'Male';
+          }
+          if (customerData.nomineeGender) {
+            const g = customerData.nomineeGender.toString().toLowerCase();
+            customerData.nomineeGender = g.startsWith('f') ? 'Female' : g.startsWith('m') ? 'Male' : 'Other';
+          } else {
+            customerData.nomineeGender = 'Male';
+          }
+
+          // Format dates to YYYY-MM-DD for HTML inputs
+          const formatDate = (dateStr: string) => {
+            if (!dateStr || dateStr === 'N/A') return '2000-01-01'; // Safe default
+            const str = String(dateStr).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+            
+            // Check for DD-MM-YYYY, MM-DD-YYYY, DD/MM/YY, etc
+            const match = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})$/);
+            if (match) {
+              const part1 = parseInt(match[1], 10);
+              const part2 = parseInt(match[2], 10);
+              let year = match[3];
+              if (year.length === 2) year = parseInt(year) > 50 ? `19${year}` : `20${year}`;
+              
+              if (part2 > 12) {
+                return `${year}-${String(part1).padStart(2, '0')}-${String(part2).padStart(2, '0')}`;
+              }
+              if (part1 > 12) {
+                return `${year}-${String(part2).padStart(2, '0')}-${String(part1).padStart(2, '0')}`;
+              }
+              return `${year}-${String(part2).padStart(2, '0')}-${String(part1).padStart(2, '0')}`;
+            }
+
+            // Fallback for custom formats like "30 May 1970"
+            const d = new Date(str);
+            if (!isNaN(d.getTime())) {
+               return d.toISOString().split('T')[0];
+            }
+            
+            return '2000-01-01'; // Ultimate fallback
+          };
+
+          // Apply Safe Defaults to bypass Mongoose validation errors
+          customerData.status = customerData.status || 'active';
+          customerData.memberId = customerData.memberId || `CB-IMP-${Date.now()}-${i}`;
+          customerData.memberName = customerData.memberName || 'Unknown';
+          customerData.phone = customerData.phone || 'N/A';
+          customerData.email = customerData.email || 'N/A';
+          customerData.dob = formatDate(customerData.dob);
+          customerData.address = customerData.address || 'N/A';
+          customerData.planName = customerData.planName || 'N/A';
+          customerData.planStart = formatDate(customerData.planStart);
+          customerData.planEnd = formatDate(customerData.planEnd);
+          customerData.coveragePrice = customerData.coveragePrice || 0;
+          customerData.nomineeName = customerData.nomineeName || 'N/A';
+          customerData.nomineeDob = formatDate(customerData.nomineeDob);
+          customerData.relationship = customerData.relationship || 'N/A';
+
+          // Clean up numeric fields
+          if (customerData.coveragePrice) {
+            customerData.coveragePrice = customerData.coveragePrice.toString().replace(/[^0-9.]/g, '');
+            if (!customerData.coveragePrice) customerData.coveragePrice = 0;
+          }
+          if (customerData.membersCovered) {
+            customerData.membersCovered = customerData.membersCovered.toString().replace(/[^0-9]/g, '');
+          }
+
+          try {
+            const res = await fetch('/api/customers', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(customerData)
+            });
+            if (res.ok) {
+              successCount++;
+            } else {
+              failCount++;
+              const errData = await res.json();
+              if (!lastErrorMsg) lastErrorMsg = errData.error || errData.message || JSON.stringify(errData);
+            }
+          } catch(err: any) {
+            failCount++;
+            if (!lastErrorMsg) lastErrorMsg = err.message || 'Network error';
+          }
         }
+        
+        let finalMsg = `Import complete. Success: ${successCount}, Failed: ${failCount}`;
+        if (failCount > 0 && lastErrorMsg) {
+          finalMsg += `\n\nDatabase Error on failed rows: ${lastErrorMsg}`;
+        }
+        if (missingReport.length > 0) {
+          finalMsg += `\n\nNote: Some data was missing and auto-filled with 'N/A':\n` + missingReport.slice(0, 10).join('\n');
+          if (missingReport.length > 10) finalMsg += `\n...and ${missingReport.length - 10} more rows.`;
+        }
+        alert(finalMsg);
+        fetchCustomers();
+      } catch (error) {
+        console.error("Error reading file", error);
+        alert('Failed to parse file. Ensure it is a valid CSV or Excel file.');
       }
-      alert(`Import complete. Success: ${successCount}, Failed: ${failCount}`);
-      fetchCustomers();
     };
-    reader.readAsText(file);
+    reader.readAsBinaryString(file);
     e.target.value = ''; // reset
   };
 
@@ -295,8 +422,8 @@ export default function CustomersPage() {
         <div style={{ display: 'flex', gap: '12px' }}>
           <label className="btn btn-secondary" style={{ cursor: 'pointer' }}>
             <HiOutlineUpload size={18} />
-            Import CSV
-            <input type="file" accept=".csv" hidden onChange={handleImport} />
+            Import Data
+            <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" hidden onChange={handleImport} />
           </label>
           <Link href="/customers/new" className="btn btn-primary">
             <HiOutlinePlus size={18} />
