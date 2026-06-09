@@ -58,6 +58,7 @@ export default function CustomersPage() {
   const [sendingEmail, setSendingEmail] = useState<string | null>(null);
   const [previewingPdf, setPreviewingPdf] = useState<string | null>(null);
   const [templates, setTemplates] = useState<any[]>([]);
+  const [importProgress, setImportProgress] = useState<{current: number, total: number} | null>(null);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
 
@@ -333,18 +334,18 @@ export default function CustomersPage() {
 
         const aliasMap: Record<string, string> = {
           customerid: 'memberId', id: 'memberId',
-          name: 'memberName', customername: 'memberName', fullname: 'memberName', membername: 'memberName',
+          name: 'memberName', customername: 'memberName', fullname: 'memberName', membername: 'memberName', customerfullname: 'memberName',
           contact: 'phone', contactnumber: 'phone', mobile: 'phone', phone: 'phone', phonenumber: 'phone', customercontactnumber: 'phone',
           emailaddress: 'email', email: 'email', mail: 'email', emailid: 'email', customeremailid: 'email',
-          address: 'address', location: 'address', city: 'address',
-          dateofbirth: 'dob', birthdate: 'dob', dob: 'dob',
-          gender: 'gender', sex: 'gender',
+          address: 'address', location: 'address', city: 'address', customeraddress: 'address',
+          dateofbirth: 'dob', birthdate: 'dob', dob: 'dob', customerdob: 'dob',
+          gender: 'gender', sex: 'gender', customergender: 'gender',
           plan: 'planName', planname: 'planName', package: 'planName', policy: 'planName',
           startdate: 'planStart', planstart: 'planStart', start: 'planStart',
           enddate: 'planEnd', planend: 'planEnd', expiry: 'planEnd',
           price: 'coveragePrice', coverageprice: 'coveragePrice', amount: 'coveragePrice', fee: 'coveragePrice',
           nominee: 'nomineeName', nomineename: 'nomineeName', nominee1nomineesname: 'nomineeName',
-          nomineerelation: 'relationship', relationship: 'relationship', relation: 'relationship', nominee1nomineesrelationshipwithcustomer: 'relationship',
+          nomineerelation: 'relationship', relationship: 'relationship', relation: 'relationship', nominee1nomineesrelationshipwithcustomer: 'relationship', nomineerelationship: 'relationship',
           nomineedob: 'nomineeDob', nominee1nomineesdob: 'nomineeDob',
           nomineegender: 'nomineeGender', nominee1nomineesgender: 'nomineeGender',
           members: 'membersCovered', memberscovered: 'membersCovered',
@@ -354,10 +355,12 @@ export default function CustomersPage() {
         let lastErrorMsg = '';
 
         for (let i = 0; i < data.length; i++) {
+          setImportProgress({ current: i + 1, total: data.length });
           const rawData: any = data[i];
           const customerData: any = {};
           let addressParts: string[] = [];
           let nomineeNameParts: string[] = [];
+          let memberNameParts: string[] = [];
           
           // Smart Normalize keys
           Object.keys(rawData).forEach(key => {
@@ -374,6 +377,11 @@ export default function CustomersPage() {
             if (normalizedKey.includes('nomineesfirstname') || normalizedKey.includes('nomineessurname')) {
               nomineeNameParts.push(String(rawData[key]).trim());
             }
+
+            // Auto-concatenate customer first name and last name
+            if (normalizedKey.includes('customersfirstname') || normalizedKey.includes('customerssurname')) {
+              memberNameParts.push(String(rawData[key]).trim());
+            }
           });
 
           if (addressParts.length > 0) {
@@ -381,6 +389,9 @@ export default function CustomersPage() {
           }
           if (nomineeNameParts.length > 0) {
             customerData.nomineeName = nomineeNameParts.filter(Boolean).join(' ');
+          }
+          if (memberNameParts.length > 0) {
+            customerData.memberName = memberNameParts.filter(Boolean).join(' ');
           }
 
           // Check for missing required fields BEFORE applying defaults
@@ -487,6 +498,7 @@ export default function CustomersPage() {
           }
         }
         
+        setImportProgress(null);
         let finalMsg = `Import complete. Success: ${successCount}, Failed: ${failCount}`;
         if (failCount > 0 && lastErrorMsg) {
           finalMsg += `\n\nDatabase Error on failed rows: ${lastErrorMsg}`;
@@ -499,6 +511,7 @@ export default function CustomersPage() {
         fetchCustomers();
       } catch (error) {
         console.error("Error reading file", error);
+        setImportProgress(null);
         alert('Failed to parse file. Ensure it is a valid CSV or Excel file.');
       }
     };
@@ -512,6 +525,20 @@ export default function CustomersPage() {
       animate={{ opacity: 1 }}
       className="customers-page"
     >
+      {importProgress && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'white', padding: '32px', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '320px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+            <div className="spinner-small" style={{ width: '48px', height: '48px', borderWidth: '4px', marginBottom: '24px' }}></div>
+            <h2 style={{ margin: 0, fontSize: '20px', fontFamily: 'Outfit', color: 'var(--foreground)' }}>Importing Customers...</h2>
+            <p style={{ marginTop: '8px', color: 'var(--foreground-dim)', fontSize: '15px' }}>Processing row {importProgress.current} of {importProgress.total}</p>
+            <div style={{ width: '100%', height: '8px', background: '#e5e7eb', borderRadius: '4px', marginTop: '16px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', background: 'var(--brand-primary)', width: `${(importProgress.current / importProgress.total) * 100}%`, transition: 'width 0.1s linear' }}></div>
+            </div>
+            <p style={{ marginTop: '16px', fontSize: '12px', color: 'var(--brand-secondary-light)', fontWeight: 500 }}>Please do not close this window</p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="page-header-row">
         <div>
