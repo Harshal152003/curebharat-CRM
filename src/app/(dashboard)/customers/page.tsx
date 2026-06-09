@@ -465,10 +465,9 @@ export default function CustomersPage() {
           customerData.relationship = customerData.relationship || 'N/A';
           
           if (customerData.misHolder) {
-            const val = String(customerData.misHolder).toLowerCase().trim();
-            customerData.misHolder = (val === 'yes' || val === 'y' || val === 'true') ? 'Yes' : 'No';
+            customerData.misHolder = String(customerData.misHolder).trim();
           } else {
-            customerData.misHolder = 'No';
+            customerData.misHolder = '';
           }
 
           // Clean up numeric fields
