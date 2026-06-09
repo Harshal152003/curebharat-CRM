@@ -1,22 +1,32 @@
 import { ITemplatePage, IComponent, ISection, ICustomer } from '@/types';
 
+function formatDateDDMMYYYY(dateString?: string): string {
+  if (!dateString) return '';
+  const dStr = dateString.split('T')[0];
+  const parts = dStr.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return dateString;
+}
+
 export function compilePlaceholders(text: string, customer: ICustomer): string {
   const map: Record<string, string> = {
     '{{member_name}}': customer.memberName || '',
     '{{member_id}}': customer.memberId || '',
-    '{{dob}}': customer.dob || '',
+    '{{dob}}': formatDateDDMMYYYY(customer.dob),
     '{{gender}}': customer.gender || '',
     '{{phone}}': customer.phone || '',
     '{{email}}': customer.email || '',
     '{{mis_holder}}': customer.misHolder || 'No',
     '{{address}}': customer.address || '',
     '{{nominee_name}}': customer.nomineeName || '',
-    '{{nominee_dob}}': customer.nomineeDob || '',
+    '{{nominee_dob}}': formatDateDDMMYYYY(customer.nomineeDob),
     '{{nominee_gender}}': customer.nomineeGender || '',
     '{{relationship}}': customer.relationship || '',
     '{{plan_name}}': customer.planName || '',
-    '{{plan_start}}': customer.planStart || '',
-    '{{plan_end}}': customer.planEnd || '',
+    '{{plan_start}}': formatDateDDMMYYYY(customer.planStart),
+    '{{plan_end}}': formatDateDDMMYYYY(customer.planEnd),
     '{{plan_price}}': customer.coveragePrice?.toString() || '',
     '{{coverage_price}}': customer.coveragePrice?.toString() || '',
     '{{members_covered}}': customer.membersCovered?.toString() || '',
