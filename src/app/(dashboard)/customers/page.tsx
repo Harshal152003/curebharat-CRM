@@ -245,6 +245,19 @@ export default function CustomersPage() {
     );
   };
 
+  const handleSelectAllGlobally = async () => {
+    try {
+      const res = await fetch(`/api/customers?limit=100000&search=${encodeURIComponent(search)}&incomplete=${filterIncomplete}`);
+      const data = await res.json();
+      if (data.success) {
+        setSelectedCustomerIds(data.data.map((c: any) => c._id));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to select all customers');
+    }
+  };
+
   const handleBulkSendEmail = async () => {
     if (!templates.length) {
       alert('No templates available to send');
@@ -631,6 +644,19 @@ export default function CustomersPage() {
           </div>
         ) : (
           <div className="table-wrapper">
+            {selectedCustomerIds.length >= customers.length && selectedCustomerIds.length < total && customers.every(c => selectedCustomerIds.includes(c._id!)) && (
+              <div style={{ background: 'var(--brand-primary-light)', color: 'var(--brand-primary-dark)', padding: '12px', textAlign: 'center', fontSize: '14px', borderBottom: '1px solid var(--border)' }}>
+                All <strong>{customers.length}</strong> customers on this page are selected. 
+                <button onClick={handleSelectAllGlobally} style={{ background: 'none', border: 'none', color: 'var(--brand-primary)', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', marginLeft: '8px' }}>
+                  Select all {total} customers matching search
+                </button>
+              </div>
+            )}
+            {selectedCustomerIds.length === total && total > 0 && (
+              <div style={{ background: 'var(--brand-primary-light)', color: 'var(--brand-primary-dark)', padding: '12px', textAlign: 'center', fontSize: '14px', borderBottom: '1px solid var(--border)', fontWeight: 500 }}>
+                All {total} customers are selected.
+              </div>
+            )}
             <table className="data-table">
               <thead>
                 <tr>
