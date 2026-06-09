@@ -19,6 +19,27 @@ import {
 import * as XLSX from 'xlsx';
 import { ICustomer } from '@/types';
 
+const getIncompleteFields = (customer: ICustomer) => {
+  const missingStringValues = ['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'];
+  const missingDateValues = ['2000-01-01', '1900-01-01', 'N/A', 'n/a', ''];
+  const incomplete = [];
+
+  if (!customer.memberName || missingStringValues.includes(customer.memberName)) incomplete.push('Member Name');
+  if (!customer.phone || missingStringValues.includes(customer.phone)) incomplete.push('Phone');
+  if (!customer.email || missingStringValues.includes(customer.email)) incomplete.push('Email');
+  if (!customer.address || missingStringValues.includes(customer.address)) incomplete.push('Address');
+  if (!customer.nomineeName || missingStringValues.includes(customer.nomineeName)) incomplete.push('Nominee Name');
+  if (!customer.relationship || missingStringValues.includes(customer.relationship)) incomplete.push('Relationship');
+  if (!customer.planName || missingStringValues.includes(customer.planName)) incomplete.push('Plan Name');
+  if (!customer.dob || missingDateValues.includes(customer.dob)) incomplete.push('DOB');
+  if (!customer.planStart || missingDateValues.includes(customer.planStart)) incomplete.push('Plan Start');
+  if (!customer.planEnd || missingDateValues.includes(customer.planEnd)) incomplete.push('Plan End');
+  if (!customer.nomineeDob || missingDateValues.includes(customer.nomineeDob)) incomplete.push('Nominee DOB');
+  if (customer.coveragePrice === undefined || customer.coveragePrice === null || customer.coveragePrice === 0) incomplete.push('Coverage Price');
+
+  return incomplete;
+};
+
 export default function CustomersPage() {
   const router = useRouter();
   const [customers, setCustomers] = useState<ICustomer[]>([]);
@@ -584,105 +605,154 @@ export default function CustomersPage() {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((customer, index) => (
-                  <motion.tr
-                    key={customer._id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    style={{ background: selectedCustomerIds.includes(customer._id!) ? 'rgba(var(--brand-primary-rgb), 0.05)' : 'transparent' }}
-                  >
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedCustomerIds.includes(customer._id!)}
-                        onChange={() => handleSelectOne(customer._id!)}
-                        className="checkbox"
-                      />
-                    </td>
-                    <td>
-                      <span className="member-id">{customer.memberId}</span>
-                    </td>
-                    <td>
-                      <div className="customer-name-cell">
-                        <div className="customer-avatar">
-                          {customer.memberName.charAt(0)}
+                 {customers.map((customer, index) => {
+                  const incompleteFields = getIncompleteFields(customer);
+                  const isIncomplete = incompleteFields.length > 0;
+                  const isSelected = selectedCustomerIds.includes(customer._id!);
+
+                  // Determine background highlight
+                  let rowBg = 'transparent';
+                  if (isSelected) {
+                    rowBg = 'rgba(13, 124, 62, 0.06)'; // Primary brand green tint
+                  } else if (isIncomplete) {
+                    rowBg = 'rgba(232, 116, 42, 0.03)'; // Subtle orange warning tint
+                  }
+
+                  return (
+                    <motion.tr
+                      key={customer._id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      style={{ 
+                        background: rowBg,
+                        borderLeft: isIncomplete ? '3px solid var(--brand-secondary)' : 'none'
+                      }}
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleSelectOne(customer._id!)}
+                          className="checkbox"
+                        />
+                      </td>
+                      <td>
+                        <span className="member-id">{customer.memberId}</span>
+                      </td>
+                      <td>
+                        <div className="customer-name-cell">
+                          <div className="customer-avatar" style={
+                            isIncomplete ? { background: 'linear-gradient(135deg, var(--neutral-400), var(--neutral-600))' } : {}
+                          }>
+                            {customer.memberName ? customer.memberName.charAt(0) : '?'}
+                          </div>
+                          <div>
+                            <div className="customer-name" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                              {customer.memberName || 'Unknown'}
+                              {isIncomplete && (
+                                <span className="warning-indicator" title={`Incomplete: ${incompleteFields.join(', ')}`}>
+                                  Incomplete
+                                </span>
+                              )}
+                            </div>
+                            <div className="customer-email" style={
+                              (!customer.email || ['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'].includes(customer.email))
+                                ? { color: 'var(--error)', fontStyle: 'italic', fontWeight: 500 }
+                                : {}
+                            }>
+                              {customer.email}
+                            </div>
+                            {isIncomplete && (
+                              <div className="incomplete-fields-list">
+                                Missing: {incompleteFields.join(', ')}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <div className="customer-name">{customer.memberName}</div>
-                          <div className="customer-email">{customer.email}</div>
+                      </td>
+                      <td style={
+                        (!customer.phone || ['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'].includes(customer.phone))
+                          ? { color: 'var(--error)', fontStyle: 'italic', fontWeight: 500 }
+                          : {}
+                      }>
+                        {customer.phone}
+                      </td>
+                      <td>
+                        <span className="plan-badge">{customer.planName}</span>
+                        {((!customer.planStart || ['2000-01-01', '1900-01-01', 'N/A', 'n/a', ''].includes(customer.planStart)) || 
+                          (!customer.planEnd || ['2000-01-01', '1900-01-01', 'N/A', 'n/a', ''].includes(customer.planEnd))) && (
+                            <div style={{ fontSize: '11px', color: 'var(--error)', marginTop: '4px', fontStyle: 'italic', fontWeight: 500 }}>
+                              Missing Dates
+                            </div>
+                        )}
+                      </td>
+                      <td>
+                        <span
+                          className={`badge ${
+                            customer.status === 'active'
+                              ? 'badge-success'
+                              : customer.status === 'expired'
+                              ? 'badge-error'
+                              : 'badge-warning'
+                          }`}
+                        >
+                          {customer.status}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-btns">
+                          <button
+                            className="btn btn-icon btn-ghost"
+                            title="Preview PDF"
+                            onClick={() => handlePreviewPDF(customer)}
+                            disabled={previewingPdf === customer._id}
+                          >
+                            {previewingPdf === customer._id ? (
+                              <div className="spinner-small" />
+                            ) : (
+                              <HiOutlineDocumentText size={16} />
+                            )}
+                          </button>
+                          <button
+                            className="btn btn-icon btn-ghost"
+                            title="Send Email & PDF"
+                            onClick={() => handleSendEmail(customer)}
+                            disabled={sendingEmail === customer._id}
+                          >
+                            {sendingEmail === customer._id ? (
+                              <div className="spinner-small" />
+                            ) : (
+                              <HiOutlineMail size={16} />
+                            )}
+                          </button>
+                          <button
+                            className="btn btn-icon btn-ghost"
+                            title="View"
+                            onClick={() => router.push(`/customers/${customer._id}`)}
+                          >
+                            <HiOutlineEye size={16} />
+                          </button>
+                          <button
+                            className="btn btn-icon btn-ghost"
+                            title="Edit"
+                            onClick={() => router.push(`/customers/${customer._id}?edit=true`)}
+                          >
+                            <HiOutlinePencil size={16} />
+                          </button>
+                          <button
+                            className="btn btn-icon btn-ghost"
+                            title="Delete"
+                            onClick={() => handleDelete(customer._id!)}
+                            style={{ color: 'var(--error)' }}
+                          >
+                            <HiOutlineTrash size={16} />
+                          </button>
                         </div>
-                      </div>
-                    </td>
-                    <td>{customer.phone}</td>
-                    <td>
-                      <span className="plan-badge">{customer.planName}</span>
-                    </td>
-                    <td>
-                      <span
-                        className={`badge ${
-                          customer.status === 'active'
-                            ? 'badge-success'
-                            : customer.status === 'expired'
-                            ? 'badge-error'
-                            : 'badge-warning'
-                        }`}
-                      >
-                        {customer.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="action-btns">
-                        <button
-                          className="btn btn-icon btn-ghost"
-                          title="Preview PDF"
-                          onClick={() => handlePreviewPDF(customer)}
-                          disabled={previewingPdf === customer._id}
-                        >
-                          {previewingPdf === customer._id ? (
-                            <div className="spinner-small" />
-                          ) : (
-                            <HiOutlineDocumentText size={16} />
-                          )}
-                        </button>
-                        <button
-                          className="btn btn-icon btn-ghost"
-                          title="Send Email & PDF"
-                          onClick={() => handleSendEmail(customer)}
-                          disabled={sendingEmail === customer._id}
-                        >
-                          {sendingEmail === customer._id ? (
-                            <div className="spinner-small" />
-                          ) : (
-                            <HiOutlineMail size={16} />
-                          )}
-                        </button>
-                        <button
-                          className="btn btn-icon btn-ghost"
-                          title="View"
-                          onClick={() => router.push(`/customers/${customer._id}`)}
-                        >
-                          <HiOutlineEye size={16} />
-                        </button>
-                        <button
-                          className="btn btn-icon btn-ghost"
-                          title="Edit"
-                          onClick={() => router.push(`/customers/${customer._id}?edit=true`)}
-                        >
-                          <HiOutlinePencil size={16} />
-                        </button>
-                        <button
-                          className="btn btn-icon btn-ghost"
-                          title="Delete"
-                          onClick={() => handleDelete(customer._id!)}
-                          style={{ color: 'var(--error)' }}
-                        >
-                          <HiOutlineTrash size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
+                      </td>
+                    </motion.tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -824,6 +894,26 @@ export default function CustomersPage() {
         .customer-email {
           font-size: 12px;
           color: var(--foreground-dim);
+        }
+
+        .warning-indicator {
+          font-size: 10px;
+          background: rgba(245, 158, 11, 0.12);
+          color: var(--brand-secondary-light);
+          border: 1px solid rgba(245, 158, 11, 0.25);
+          padding: 1px 6px;
+          border-radius: 4px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .incomplete-fields-list {
+          font-size: 11px;
+          color: var(--brand-secondary-light);
+          margin-top: 4px;
+          font-weight: 500;
+          letter-spacing: 0.01em;
         }
 
         .plan-badge {
