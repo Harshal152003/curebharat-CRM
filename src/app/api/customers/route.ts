@@ -35,14 +35,35 @@ export async function GET(request: Request) {
     }
 
     if (incomplete) {
+      const missingStringValues = ['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'];
+      const missingDateValues = ['2000-01-01', '1900-01-01', 'N/A', 'n/a', ''];
+      
       andConditions.push({
         $or: [
-          { phone: 'N/A' },
-          { email: 'N/A' },
-          { nomineeName: 'N/A' },
-          { address: 'N/A' },
-          { relationship: 'N/A' },
-          { planName: 'N/A' }
+          { memberName: { $in: [...missingStringValues, null] } },
+          { memberName: { $exists: false } },
+          { phone: { $in: [...missingStringValues, null] } },
+          { phone: { $exists: false } },
+          { email: { $in: [...missingStringValues, null] } },
+          { email: { $exists: false } },
+          { address: { $in: [...missingStringValues, null] } },
+          { address: { $exists: false } },
+          { nomineeName: { $in: [...missingStringValues, null] } },
+          { nomineeName: { $exists: false } },
+          { relationship: { $in: [...missingStringValues, null] } },
+          { relationship: { $exists: false } },
+          { planName: { $in: [...missingStringValues, null] } },
+          { planName: { $exists: false } },
+          { dob: { $in: [...missingDateValues, null] } },
+          { dob: { $exists: false } },
+          { planStart: { $in: [...missingDateValues, null] } },
+          { planStart: { $exists: false } },
+          { planEnd: { $in: [...missingDateValues, null] } },
+          { planEnd: { $exists: false } },
+          { nomineeDob: { $in: [...missingDateValues, null] } },
+          { nomineeDob: { $exists: false } },
+          { coveragePrice: { $in: [0, null] } },
+          { coveragePrice: { $exists: false } }
         ]
       });
     }
