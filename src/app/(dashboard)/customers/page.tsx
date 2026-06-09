@@ -623,6 +623,9 @@ export default function CustomersPage() {
               <HiOutlineMail size={16} />
               {sendingEmail ? 'Sending...' : 'Send Email & PDF'}
             </button>
+            <button className="btn btn-secondary btn-sm" onClick={() => setSelectedCustomerIds([])} style={{ color: '#ef4444', borderColor: '#fee2e2', background: '#fef2f2' }}>
+              Cancel Selection
+            </button>
           </div>
         )}
       </div>
