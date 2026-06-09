@@ -353,6 +353,7 @@ export default function CustomersPage() {
         };
 
         let lastErrorMsg = '';
+        const parsedCustomers: any[] = [];
 
         for (let i = 0; i < data.length; i++) {
           setImportProgress({ current: i + 1, total: data.length });
@@ -479,23 +480,29 @@ export default function CustomersPage() {
             customerData.membersCovered = customerData.membersCovered.toString().replace(/[^0-9]/g, '');
           }
 
-          try {
-            const res = await fetch('/api/customers', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(customerData)
-            });
-            if (res.ok) {
-              successCount++;
-            } else {
-              failCount++;
-              const errData = await res.json();
-              if (!lastErrorMsg) lastErrorMsg = errData.error || errData.message || JSON.stringify(errData);
+          parsedCustomers.push(customerData);
+        }
+
+        try {
+          const res = await fetch('/api/customers/bulk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(parsedCustomers)
+          });
+          const resultData = await res.json();
+          
+          if (res.ok) {
+            successCount = resultData.count || parsedCustomers.length;
+            if (resultData.message && resultData.message.includes('Skipped duplicates')) {
+              lastErrorMsg = 'Some duplicate records were skipped safely.';
             }
-          } catch(err: any) {
-            failCount++;
-            if (!lastErrorMsg) lastErrorMsg = err.message || 'Network error';
+          } else {
+            failCount = parsedCustomers.length;
+            lastErrorMsg = resultData.error || 'Bulk import failed';
           }
+        } catch (error: any) {
+          failCount = parsedCustomers.length;
+          lastErrorMsg = error.message || 'Network error during bulk import';
         }
         
         setImportProgress(null);
@@ -529,12 +536,12 @@ export default function CustomersPage() {
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)' }}>
           <div style={{ background: 'white', padding: '32px', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '320px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
             <div className="spinner-small" style={{ width: '48px', height: '48px', borderWidth: '4px', marginBottom: '24px' }}></div>
-            <h2 style={{ margin: 0, fontSize: '20px', fontFamily: 'Outfit', color: 'var(--foreground)' }}>Importing Customers...</h2>
-            <p style={{ marginTop: '8px', color: 'var(--foreground-dim)', fontSize: '15px' }}>Processing row {importProgress.current} of {importProgress.total}</p>
+            <h2 style={{ margin: 0, fontSize: '20px', fontFamily: 'Outfit', color: 'var(--foreground)' }}>Bulk Importing Customers...</h2>
+            <p style={{ marginTop: '8px', color: 'var(--foreground-dim)', fontSize: '15px' }}>Preparing and securely saving {importProgress.total} records</p>
             <div style={{ width: '100%', height: '8px', background: '#e5e7eb', borderRadius: '4px', marginTop: '16px', overflow: 'hidden' }}>
               <div style={{ height: '100%', background: 'var(--brand-primary)', width: `${(importProgress.current / importProgress.total) * 100}%`, transition: 'width 0.1s linear' }}></div>
             </div>
-            <p style={{ marginTop: '16px', fontSize: '12px', color: 'var(--brand-secondary-light)', fontWeight: 500 }}>Please do not close this window</p>
+            <p style={{ marginTop: '16px', fontSize: '12px', color: 'var(--brand-secondary-light)', fontWeight: 500 }}>This will only take a few seconds...</p>
           </div>
         </div>
       )}
