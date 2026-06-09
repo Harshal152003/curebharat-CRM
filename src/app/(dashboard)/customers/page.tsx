@@ -19,24 +19,29 @@ import {
 import * as XLSX from 'xlsx';
 import { ICustomer } from '@/types';
 
+export const isFieldIncomplete = (value: any, isDate: boolean = false) => {
+  if (value === undefined || value === null) return true;
+  if (typeof value === 'number' && value === 0) return true;
+  const strVal = String(value).trim();
+  if (['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'].includes(strVal)) return true;
+  if (isDate && ['2000-01-01', '1900-01-01'].includes(strVal)) return true;
+  return false;
+};
+
 const getIncompleteFields = (customer: ICustomer) => {
-  const missingStringValues = ['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'];
-  const missingDateValues = ['2000-01-01', '1900-01-01', 'N/A', 'n/a', ''];
   const incomplete = [];
-
-  if (!customer.memberName || missingStringValues.includes(customer.memberName)) incomplete.push('Member Name');
-  if (!customer.phone || missingStringValues.includes(customer.phone)) incomplete.push('Phone');
-  if (!customer.email || missingStringValues.includes(customer.email)) incomplete.push('Email');
-  if (!customer.address || missingStringValues.includes(customer.address)) incomplete.push('Address');
-  if (!customer.nomineeName || missingStringValues.includes(customer.nomineeName)) incomplete.push('Nominee Name');
-  if (!customer.relationship || missingStringValues.includes(customer.relationship)) incomplete.push('Relationship');
-  if (!customer.planName || missingStringValues.includes(customer.planName)) incomplete.push('Plan Name');
-  if (!customer.dob || missingDateValues.includes(customer.dob)) incomplete.push('DOB');
-  if (!customer.planStart || missingDateValues.includes(customer.planStart)) incomplete.push('Plan Start');
-  if (!customer.planEnd || missingDateValues.includes(customer.planEnd)) incomplete.push('Plan End');
-  if (!customer.nomineeDob || missingDateValues.includes(customer.nomineeDob)) incomplete.push('Nominee DOB');
-  if (customer.coveragePrice === undefined || customer.coveragePrice === null || customer.coveragePrice === 0) incomplete.push('Coverage Price');
-
+  if (isFieldIncomplete(customer.memberName)) incomplete.push('Member Name');
+  if (isFieldIncomplete(customer.phone)) incomplete.push('Phone');
+  if (isFieldIncomplete(customer.email)) incomplete.push('Email');
+  if (isFieldIncomplete(customer.address)) incomplete.push('Address');
+  if (isFieldIncomplete(customer.nomineeName)) incomplete.push('Nominee Name');
+  if (isFieldIncomplete(customer.relationship)) incomplete.push('Relationship');
+  if (isFieldIncomplete(customer.planName)) incomplete.push('Plan Name');
+  if (isFieldIncomplete(customer.dob, true)) incomplete.push('DOB');
+  if (isFieldIncomplete(customer.planStart, true)) incomplete.push('Plan Start');
+  if (isFieldIncomplete(customer.planEnd, true)) incomplete.push('Plan End');
+  if (isFieldIncomplete(customer.nomineeDob, true)) incomplete.push('Nominee DOB');
+  if (isFieldIncomplete(customer.coveragePrice)) incomplete.push('Coverage Price');
   return incomplete;
 };
 
@@ -623,7 +628,7 @@ export default function CustomersPage() {
                   if (isSelected) {
                     rowBg = 'rgba(13, 124, 62, 0.06)'; // Primary brand green tint
                   } else if (isIncomplete) {
-                    rowBg = 'rgba(232, 116, 42, 0.03)'; // Subtle orange warning tint
+                    rowBg = 'rgba(239, 68, 68, 0.04)'; // Subtle red warning tint for incomplete data
                   }
 
                   return (
@@ -634,7 +639,7 @@ export default function CustomersPage() {
                       transition={{ delay: index * 0.05 }}
                       style={{ 
                         background: rowBg,
-                        borderLeft: isIncomplete ? '3px solid var(--brand-secondary)' : 'none'
+                        borderLeft: isIncomplete ? '4px solid #ef4444' : 'none'
                       }}
                     >
                       <td>
@@ -665,8 +670,8 @@ export default function CustomersPage() {
                               )}
                             </div>
                             <div className="customer-email" style={
-                              (!customer.email || ['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'].includes(customer.email))
-                                ? { color: 'var(--error)', fontStyle: 'italic', fontWeight: 500 }
+                              isFieldIncomplete(customer.email)
+                                ? { color: '#ef4444', fontStyle: 'italic', fontWeight: 600, display: 'inline-block', padding: '2px 6px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '4px', marginTop: '2px' }
                                 : {}
                             }>
                               {customer.email}
@@ -680,17 +685,16 @@ export default function CustomersPage() {
                         </div>
                       </td>
                       <td style={
-                        (!customer.phone || ['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'].includes(customer.phone))
-                          ? { color: 'var(--error)', fontStyle: 'italic', fontWeight: 500 }
+                        isFieldIncomplete(customer.phone)
+                          ? { color: '#ef4444', fontStyle: 'italic', fontWeight: 600 }
                           : {}
                       }>
                         {customer.phone}
                       </td>
                       <td>
                         <span className="plan-badge">{customer.planName}</span>
-                        {((!customer.planStart || ['2000-01-01', '1900-01-01', 'N/A', 'n/a', ''].includes(customer.planStart)) || 
-                          (!customer.planEnd || ['2000-01-01', '1900-01-01', 'N/A', 'n/a', ''].includes(customer.planEnd))) && (
-                            <div style={{ fontSize: '11px', color: 'var(--error)', marginTop: '4px', fontStyle: 'italic', fontWeight: 500 }}>
+                        {(isFieldIncomplete(customer.planStart, true) || isFieldIncomplete(customer.planEnd, true)) && (
+                            <div style={{ fontSize: '11px', color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)', padding: '2px 6px', borderRadius: '4px', marginTop: '4px', fontStyle: 'italic', fontWeight: 600, display: 'inline-block' }}>
                               Missing Dates
                             </div>
                         )}
@@ -904,24 +908,38 @@ export default function CustomersPage() {
           color: var(--foreground-dim);
         }
 
+        @keyframes pulseError {
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+          70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
         .warning-indicator {
           font-size: 10px;
-          background: rgba(245, 158, 11, 0.12);
-          color: var(--brand-secondary-light);
-          border: 1px solid rgba(245, 158, 11, 0.25);
-          padding: 1px 6px;
-          border-radius: 4px;
-          font-weight: 600;
+          background: #ef4444;
+          color: white;
+          padding: 2px 8px;
+          border-radius: 12px;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.05em;
+          animation: pulseError 2s infinite;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
         }
 
         .incomplete-fields-list {
           font-size: 11px;
-          color: var(--brand-secondary-light);
-          margin-top: 4px;
-          font-weight: 500;
+          color: #ef4444;
+          background: rgba(239, 68, 68, 0.1);
+          padding: 4px 8px;
+          border-radius: 4px;
+          border: 1px solid rgba(239, 68, 68, 0.2);
+          margin-top: 6px;
+          font-weight: 600;
           letter-spacing: 0.01em;
+          display: inline-block;
         }
 
         .plan-badge {
