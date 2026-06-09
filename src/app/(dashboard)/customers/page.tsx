@@ -342,7 +342,8 @@ export default function CustomersPage() {
           nomineerelation: 'relationship', relationship: 'relationship', relation: 'relationship', nominee1nomineesrelationshipwithcustomer: 'relationship',
           nomineedob: 'nomineeDob', nominee1nomineesdob: 'nomineeDob',
           nomineegender: 'nomineeGender', nominee1nomineesgender: 'nomineeGender',
-          members: 'membersCovered', memberscovered: 'membersCovered'
+          members: 'membersCovered', memberscovered: 'membersCovered',
+          misholder: 'misHolder', mis: 'misHolder', misholders: 'misHolder'
         };
 
         let lastErrorMsg = '';
@@ -445,6 +446,13 @@ export default function CustomersPage() {
           customerData.nomineeName = customerData.nomineeName || 'N/A';
           customerData.nomineeDob = formatDate(customerData.nomineeDob);
           customerData.relationship = customerData.relationship || 'N/A';
+          
+          if (customerData.misHolder) {
+            const val = String(customerData.misHolder).toLowerCase().trim();
+            customerData.misHolder = (val === 'yes' || val === 'y' || val === 'true') ? 'Yes' : 'No';
+          } else {
+            customerData.misHolder = 'No';
+          }
 
           // Clean up numeric fields
           if (customerData.coveragePrice) {

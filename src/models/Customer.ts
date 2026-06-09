@@ -7,6 +7,7 @@ export interface ICustomerDoc extends Document {
   gender: 'Male' | 'Female' | 'Other';
   phone: string;
   email: string;
+  misHolder: string;
   address: string;
   nomineeName: string;
   nomineeDob: string;
@@ -56,6 +57,10 @@ const CustomerSchema = new Schema<ICustomerDoc>(
       required: true,
       lowercase: true,
       trim: true,
+    },
+    misHolder: {
+      type: String,
+      default: 'No',
     },
     address: {
       type: String,
