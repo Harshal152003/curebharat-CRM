@@ -333,7 +333,7 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
     );
 
     if (shouldPaginateRawHtml) {
-      const blocks = splitHtmlIntoBlocks(page.html);
+      const blocks = splitHtmlIntoBlocks(page.html || '');
       const paginatedBlocks = paginateHtmlBlocks(blocks);
 
       for (let j = 0; j < paginatedBlocks.length; j++) {
