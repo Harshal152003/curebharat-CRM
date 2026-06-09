@@ -164,6 +164,7 @@ const TemplatePageSchema = new Schema(
     header: { type: HeaderConfigSchema, default: {} },
     footer: { type: FooterConfigSchema, default: {} },
     sections: [SectionSchema],
+    html: { type: String, default: '' },
     showGlobalHeader: { type: Boolean, default: true },
     showGlobalFooter: { type: Boolean, default: true },
     showGlobalWatermark: { type: Boolean, default: true },

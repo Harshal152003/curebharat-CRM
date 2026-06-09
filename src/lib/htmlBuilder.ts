@@ -33,8 +33,8 @@ export function buildPageHtml(page: ITemplatePage, customer: ICustomer, pageNum:
   const bgCss = buildBackgroundCss(page);
 
   if (page.html) {
-    const parsedHtml = compilePlaceholders(page.html, customer);
-    return `<div class="pdf-page" style="${bgCss}">${parsedHtml}</div>`;
+    const parsedHtml = normalizeFullPageHtml(compilePlaceholders(page.html, customer));
+    return `<div class="pdf-page pdf-page--html" style="${bgCss}">${parsedHtml}</div>`;
   }
 
   const watermarkHtml = page.watermark?.enabled ? buildWatermark(page) : '';
@@ -152,6 +152,32 @@ function buildComponent(comp: IComponent, customer: ICustomer): string {
 
 function toKebab(str: string): string {
   return str.replace(/([A-Z])/g, '-$1').toLowerCase();
+}
+
+function normalizeFullPageHtml(html: string): string {
+  return html.replace(/<div\b([^>]*)style="([^"]*)"/i, (_match, attrs: string, styles: string) => {
+    const style = styles.trim();
+    const normalizedStyle = style
+      .replace(/(^|;)\s*height\s*:\s*100%\s*;?/i, '$1 height: 100%; box-sizing: border-box;')
+      .replace(/(^|;)\s*min-height\s*:\s*100%\s*;?/i, '$1 min-height: 100%; box-sizing: border-box;');
+
+    const hasBoxSizing = /box-sizing\s*:/i.test(normalizedStyle);
+    const finalStyle = hasBoxSizing
+      ? normalizedStyle
+      : `${normalizedStyle}${normalizedStyle.trim().endsWith(';') ? '' : ';'} box-sizing: border-box;`;
+
+    if (/class\s*=/i.test(attrs)) {
+      const nextAttrs = attrs.replace(/class="([^"]*)"/i, (_classMatch, classNames: string) => {
+        const mergedClasses = classNames.includes('pdf-html-root')
+          ? classNames
+          : `${classNames} pdf-html-root`.trim();
+        return `class="${mergedClasses}"`;
+      });
+      return `<div${nextAttrs} style="${finalStyle}"`;
+    }
+
+    return `<div class="pdf-html-root"${attrs} style="${finalStyle}"`;
+  });
 }
 
 function splitHtmlIntoBlocks(html: string): string[] {
@@ -300,7 +326,13 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
 
   for (let i = 0; i < pages.length; i++) {
     const page = pages[i];
-    if (page.html && page.html.length > 15000) {
+    const shouldPaginateRawHtml = Boolean(
+      page.html &&
+      page.html.length > 15000 &&
+      page.pageType !== 'terms'
+    );
+
+    if (shouldPaginateRawHtml) {
       const blocks = splitHtmlIntoBlocks(page.html);
       const paginatedBlocks = paginateHtmlBlocks(blocks);
 
@@ -431,6 +463,12 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
     page-break-after: always;
     page-break-inside: avoid;
     color: #333;
+  }
+
+  .pdf-page--html > .pdf-html-root {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
   }
 
   .pdf-page:last-child {

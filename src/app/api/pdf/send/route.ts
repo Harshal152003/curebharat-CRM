@@ -4,6 +4,7 @@ import Customer from '@/models/Customer';
 import Template from '@/models/Template';
 import { buildFullHtml } from '@/lib/htmlBuilder';
 import { generatePdfFromHtml } from '@/lib/pdfEngine';
+import { getPdfSafeTemplatePages } from '@/lib/templatePdfPages';
 import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
@@ -62,7 +63,11 @@ export async function POST(request: Request) {
     };
 
     // 1. Build HTML from template + customer data
-    const html = buildFullHtml(template.pages || [], customerData as unknown as import('@/types').ICustomer);
+    const pdfPages = getPdfSafeTemplatePages(
+      template.name,
+      (template.pages || []) as unknown as import('@/types').ITemplatePage[]
+    );
+    const html = buildFullHtml(pdfPages, customerData as unknown as import('@/types').ICustomer);
 
     // 2. Generate PDF
     const pdfBuffer = await generatePdfFromHtml(html);

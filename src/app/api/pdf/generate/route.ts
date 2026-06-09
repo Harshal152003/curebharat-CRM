@@ -5,6 +5,7 @@ import Template from '@/models/Template';
 import GeneratedPdf from '@/models/GeneratedPdf';
 import { buildFullHtml } from '@/lib/htmlBuilder';
 import { generatePdfFromHtml } from '@/lib/pdfEngine';
+import { getPdfSafeTemplatePages } from '@/lib/templatePdfPages';
 
 export async function POST(request: Request) {
   try {
@@ -58,7 +59,11 @@ export async function POST(request: Request) {
       ...gbmKycData
     };
 
-    const html = buildFullHtml(template.pages || [], customerData as unknown as import('@/types').ICustomer);
+    const pdfPages = getPdfSafeTemplatePages(
+      template.name,
+      (template.pages || []) as unknown as import('@/types').ITemplatePage[]
+    );
+    const html = buildFullHtml(pdfPages, customerData as unknown as import('@/types').ICustomer);
 
     // Generate PDF
     const pdfBuffer = await generatePdfFromHtml(html);

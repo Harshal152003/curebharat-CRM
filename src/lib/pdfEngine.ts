@@ -38,6 +38,41 @@ export async function generatePdfFromHtml(html: string): Promise<Buffer> {
     // Wait for fonts to load
     await page.evaluateHandle('document.fonts.ready');
 
+    // Raw HTML template pages should render as a single fitted PDF page,
+    // matching the template preview instead of being clipped or reflowed.
+    await page.evaluate(() => {
+      const htmlPages = Array.from(document.querySelectorAll<HTMLElement>('.pdf-page--html'));
+
+      htmlPages.forEach((pageEl) => {
+        const root = pageEl.querySelector<HTMLElement>(':scope > .pdf-html-root');
+        if (!root) return;
+
+        root.style.transform = '';
+        root.style.transformOrigin = 'top left';
+        root.style.width = '100%';
+        root.style.height = '100%';
+        root.style.maxHeight = 'none';
+
+        const pageWidth = pageEl.clientWidth;
+        const pageHeight = pageEl.clientHeight;
+        const contentWidth = root.scrollWidth;
+        const contentHeight = root.scrollHeight;
+
+        if (!pageWidth || !pageHeight || !contentWidth || !contentHeight) {
+          return;
+        }
+
+        const scale = Math.min(pageWidth / contentWidth, pageHeight / contentHeight, 1);
+        if (scale >= 0.999) {
+          return;
+        }
+
+        root.style.transform = `scale(${scale})`;
+        root.style.width = `${100 / scale}%`;
+        root.style.height = `${100 / scale}%`;
+      });
+    });
+
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
