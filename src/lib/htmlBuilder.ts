@@ -31,10 +31,16 @@ export function compilePlaceholders(text: string, customer: ICustomer): string {
 
 export function buildPageHtml(page: ITemplatePage, customer: ICustomer, pageNum: number, totalPages: number): string {
   const bgCss = buildBackgroundCss(page);
+
+  if (page.html) {
+    const parsedHtml = compilePlaceholders(page.html, customer);
+    return `<div class="pdf-page" style="${bgCss}">${parsedHtml}</div>`;
+  }
+
   const watermarkHtml = page.watermark?.enabled ? buildWatermark(page) : '';
   const headerHtml = page.showGlobalHeader && page.header?.enabled ? buildHeader(page) : '';
   const footerHtml = page.showGlobalFooter && page.footer?.enabled ? buildFooter(page, pageNum, totalPages) : '';
-  const contentHtml = page.sections.map((s) => buildSection(s, customer)).join('');
+  const contentHtml = (page.sections || []).map((s) => buildSection(s, customer)).join('');
 
   return `<div class="pdf-page" style="${bgCss}">${watermarkHtml}${headerHtml}<div class="pdf-content">${contentHtml}</div>${footerHtml}</div>`;
 }
@@ -148,8 +154,248 @@ function toKebab(str: string): string {
   return str.replace(/([A-Z])/g, '-$1').toLowerCase();
 }
 
+function splitHtmlIntoBlocks(html: string): string[] {
+  const blocks: string[] = [];
+  
+  const firstDivOpen = html.indexOf('<div');
+  if (firstDivOpen === -1) return [html];
+  
+  const firstDivCloseBracket = html.indexOf('>', firstDivOpen);
+  if (firstDivCloseBracket === -1) return [html];
+  
+  const lastDivClose = html.lastIndexOf('</div>');
+  if (lastDivClose === -1) return [html];
+  
+  const innerHtml = html.substring(firstDivCloseBracket + 1, lastDivClose).trim();
+  
+  let pos = 0;
+  while (pos < innerHtml.length) {
+    while (pos < innerHtml.length && /\s/.test(innerHtml[pos])) {
+      pos++;
+    }
+    if (pos >= innerHtml.length) break;
+    
+    if (innerHtml.startsWith('<hr', pos)) {
+      const hrEnd = innerHtml.indexOf('>', pos);
+      if (hrEnd !== -1) {
+        blocks.push(innerHtml.substring(pos, hrEnd + 1));
+        pos = hrEnd + 1;
+        continue;
+      }
+    }
+    
+    const isDiv = innerHtml.startsWith('<div', pos);
+    const isP = innerHtml.startsWith('<p', pos);
+    
+    if (isDiv || isP) {
+      const tagType = isDiv ? 'div' : 'p';
+      const openTag = `<${tagType}`;
+      const closeTag = `</${tagType}>`;
+      
+      let depth = 0;
+      let scanPos = pos;
+      let foundEnd = -1;
+      
+      while (scanPos < innerHtml.length) {
+        if (innerHtml.startsWith(openTag, scanPos)) {
+          depth++;
+          scanPos += openTag.length;
+        } else if (innerHtml.startsWith(closeTag, scanPos)) {
+          depth--;
+          scanPos += closeTag.length;
+          if (depth === 0) {
+            foundEnd = scanPos;
+            break;
+          }
+        } else {
+          scanPos++;
+        }
+      }
+      
+      if (foundEnd !== -1) {
+        blocks.push(innerHtml.substring(pos, foundEnd));
+        pos = foundEnd;
+      } else {
+        blocks.push(innerHtml.substring(pos));
+        break;
+      }
+    } else {
+      let nextTag = innerHtml.length;
+      const nextDiv = innerHtml.indexOf('<div', pos);
+      const nextP = innerHtml.indexOf('<p', pos);
+      const nextHr = innerHtml.indexOf('<hr', pos);
+      
+      if (nextDiv !== -1) nextTag = Math.min(nextTag, nextDiv);
+      if (nextP !== -1) nextTag = Math.min(nextTag, nextP);
+      if (nextHr !== -1) nextTag = Math.min(nextTag, nextHr);
+      
+      blocks.push(innerHtml.substring(pos, nextTag));
+      pos = nextTag;
+    }
+  }
+  
+  return blocks;
+}
+
+function estimateHtmlBlockLines(html: string): number {
+  const plainText = html.replace(/<[^>]*>/g, '').trim();
+  const textLength = plainText.length;
+  const charsPerLine = 75;
+  const textLines = Math.ceil(textLength / charsPerLine) || 1;
+  
+  if (html.includes('font-size:18px') || html.includes('font-size:17px') || html.includes('font-size:20px')) {
+    return textLines + 4;
+  }
+  if (html.includes('#F07A1F') || html.includes('border-left: 4px solid') || html.includes('border-left:4px solid')) {
+    return textLines + 3;
+  }
+  if ((html.includes('color: #0B5D2A') || html.includes('color:#0B5D2A')) && (html.includes('font-weight: 700') || html.includes('font-weight:700')) && !html.includes('display: flex') && !html.includes('display:flex')) {
+    return textLines + 4;
+  }
+  if ((html.includes('color: #1E293B') || html.includes('color:#1E293B')) && (html.includes('font-weight: 700') || html.includes('font-weight:700')) && !html.includes('display: flex') && !html.includes('display:flex')) {
+    return textLines + 2;
+  }
+  if (html.includes('&#8226;') || html.includes('&bull;') || html.includes('&#9702;') || html.includes('display: flex') || html.includes('display:flex')) {
+    if (html.includes('margin: 0 0 5px 38px') || html.includes('&#9702;')) {
+      return textLines + 0.3;
+    }
+    return textLines + 0.4;
+  }
+  return textLines + 0.6;
+}
+
+function paginateHtmlBlocks(blocks: string[]): string[][] {
+  const pages: string[][] = [];
+  let currentPage: string[] = [];
+  let currentLines = 0;
+  
+  const LINES_PER_PAGE = 40;
+  const LINES_PER_PAGE_FIRST = 35;
+  let budget = LINES_PER_PAGE_FIRST;
+
+  for (let i = 0; i < blocks.length; i++) {
+    const b = blocks[i];
+    const lines = estimateHtmlBlockLines(b);
+
+    if (currentLines + lines > budget && currentPage.length > 0) {
+      pages.push([...currentPage]);
+      currentPage = [b];
+      currentLines = lines;
+      budget = LINES_PER_PAGE;
+    } else {
+      currentPage.push(b);
+      currentLines += lines;
+    }
+  }
+
+  if (currentPage.length > 0) {
+    pages.push(currentPage);
+  }
+
+  return pages;
+}
+
 export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): string {
-  const pagesHtml = pages.map((p, i) => buildPageHtml(p, customer, i + 1, pages.length)).join('');
+  const expandedPages: { html: string; background?: any; pageType?: string }[] = [];
+
+  for (let i = 0; i < pages.length; i++) {
+    const page = pages[i];
+    if (page.html && page.html.length > 15000) {
+      const blocks = splitHtmlIntoBlocks(page.html);
+      const paginatedBlocks = paginateHtmlBlocks(blocks);
+
+      for (let j = 0; j < paginatedBlocks.length; j++) {
+        const pageBlocks = paginatedBlocks[j];
+        const isFirstTcPage = (j === 0);
+        const contentHtml = pageBlocks.join('\n');
+
+        const virtualPageHtml = `
+<div style="
+  width:100%;
+  min-height:100%;
+  padding:28px 36px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  background:#ffffff;
+  font-family:Arial,sans-serif;
+  color:#334155;
+">
+  <!-- HEADER -->
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1.5px solid #E2E8F0;
+    padding-bottom:10px;
+    margin-bottom:14px;
+  ">
+    <div style="font-size:11px; font-weight:700; color:#0B5D2A; letter-spacing:0.2px;">
+      {{plan_name}} - Terms & Conditions
+    </div>
+    <img src="https://www.curebharat.com/Logo.png" style="height:30px; width:auto; display:block;" />
+  </div>
+
+  ${isFirstTcPage ? `
+  <!-- PAGE 1: BIG TITLE -->
+  <div style="
+    font-size:17px;
+    font-weight:800;
+    color:#0B5D2A;
+    margin-bottom:12px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    text-align:center;
+    padding-bottom:10px;
+    border-bottom:2px solid #E2E8F0;
+  ">Terms &amp; Conditions</div>` : ''}
+
+  <!-- CONTENT -->
+  <div style="flex:1; overflow:hidden;">
+    ${contentHtml}
+  </div>
+
+  <!-- FOOTER -->
+  <div style="
+    border-top:1.5px solid #E2E8F0;
+    margin-top:12px;
+    padding-top:8px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    align-items:center;
+    font-size:8px;
+    color:#64748B;
+  ">
+    <div style="text-align:left;">CureBharat Wellness Private Limited</div>
+    <div style="text-align:center;">www.curebharat.com</div>
+    <div style="text-align:right; font-weight:700;">Page TEMP_PAGE_NUM</div>
+  </div>
+</div>`;
+
+        expandedPages.push({
+          html: virtualPageHtml,
+          background: page.background,
+          pageType: 'terms'
+        });
+      }
+    } else {
+      expandedPages.push(page as any);
+    }
+  }
+
+  const totalPagesCount = expandedPages.length;
+  const pagesHtml = expandedPages.map((page, idx) => {
+    const pageNum = idx + 1;
+    const bgCss = buildBackgroundCss(page as any);
+
+    if ('pageType' in page && page.pageType === 'terms' && !('sections' in page)) {
+      let compiledHtml = compilePlaceholders(page.html, customer);
+      compiledHtml = compiledHtml.replace('Page TEMP_PAGE_NUM', `Page ${pageNum} of ${totalPagesCount}`);
+      return `<div class="pdf-page" style="${bgCss}">${compiledHtml}</div>`;
+    } else {
+      return buildPageHtml(page as any, customer, pageNum, totalPagesCount);
+    }
+  }).join('');
 
   return `<!DOCTYPE html>
 <html>

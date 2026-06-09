@@ -94,6 +94,7 @@ export interface ITemplatePage {
   showGlobalHeader: boolean;
   showGlobalFooter: boolean;
   showGlobalWatermark: boolean;
+  html?: string;
 }
 
 // --- Section & Components ---

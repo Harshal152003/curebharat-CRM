@@ -14,6 +14,7 @@ import {
   HiOutlineChevronRight,
   HiOutlineMail,
   HiOutlineUpload,
+  HiOutlineDocumentText,
 } from 'react-icons/hi';
 import * as XLSX from 'xlsx';
 import { ICustomer } from '@/types';
@@ -23,11 +24,13 @@ export default function CustomersPage() {
   const [customers, setCustomers] = useState<ICustomer[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [filterIncomplete, setFilterIncomplete] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
    const [deleteId, setDeleteId] = useState<string | null>(null);
   const [sendingEmail, setSendingEmail] = useState<string | null>(null);
+  const [previewingPdf, setPreviewingPdf] = useState<string | null>(null);
   const [templates, setTemplates] = useState<any[]>([]);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
@@ -52,6 +55,7 @@ export default function CustomersPage() {
         page: page.toString(),
         limit: '10',
         ...(search && { search }),
+        ...(filterIncomplete && { incomplete: 'true' })
       });
       const res = await fetch(`/api/customers?${params}`);
       const data = await res.json();
@@ -64,9 +68,9 @@ export default function CustomersPage() {
       console.error('Failed to fetch customers:', error);
     } finally {
       setLoading(false);
-      setSelectedCustomerIds([]); // Clear selection on fetch
+      // Removed setSelectedCustomerIds([]) so selection persists across pages
     }
-  }, [page, search]);
+  }, [page, search, filterIncomplete]);
 
   useEffect(() => {
     fetchCustomers();
@@ -86,6 +90,80 @@ export default function CustomersPage() {
     setDeleteId(null);
   };
 
+  const getTemplateForCustomer = (customer: ICustomer) => {
+    let templateIdToUse = selectedTemplateId;
+    if (!templateIdToUse) {
+      const normalize = (str: string) => str.toLowerCase()
+        .replace(/^(cb|curebharat)\s*-?\s*/, '')
+        .replace(/[^a-z0-9]/g, ''); // strip spaces and punctuation for robust matching
+
+      const normPlan = normalize(customer.planName);
+
+      const matchedTemplate = templates.find(t => {
+        const normTemp = normalize(t.name);
+        return normTemp === normPlan;
+      }) || templates[0];
+      templateIdToUse = matchedTemplate?._id;
+    }
+    return templateIdToUse;
+  };
+
+  const handlePreviewPDF = async (customer: ICustomer) => {
+    if (!templates.length) {
+      alert('No templates available to generate PDF');
+      return;
+    }
+
+    const templateIdToUse = getTemplateForCustomer(customer);
+    if (!templateIdToUse) {
+      alert('Could not auto-match a template for this customer.');
+      return;
+    }
+
+    setPreviewingPdf(customer._id!);
+
+    // Open window immediately to bypass popup blocker
+    const newWindow = window.open('', '_blank');
+    if (newWindow) {
+      newWindow.document.write('<html><head><title>Generating PDF...</title></head><body style="font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;"><h2>Generating PDF, please wait...</h2></body></html>');
+    }
+
+    try {
+      const res = await fetch('/api/pdf/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerId: customer._id,
+          templateId: templateIdToUse,
+        }),
+      });
+
+      if (res.ok && res.headers.get('Content-Type')?.includes('application/pdf')) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        if (newWindow) {
+          newWindow.location.href = url;
+        } else {
+          // Fallback if blocked
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          a.click();
+        }
+      } else {
+        const data = await res.json();
+        if (newWindow) newWindow.close();
+        alert('PDF preview failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Preview error:', error);
+      if (newWindow) newWindow.close();
+      alert('An error occurred while generating PDF preview');
+    } finally {
+      setPreviewingPdf(null);
+    }
+  };
+
   const handleSendEmail = async (customer: ICustomer) => {
     if (!templates.length) {
       alert('No templates available to send');
@@ -94,21 +172,7 @@ export default function CustomersPage() {
 
     setSendingEmail(customer._id!);
     try {
-      let templateIdToUse = selectedTemplateId;
-      
-      if (!templateIdToUse) {
-        const normalize = (str: string) => str.toLowerCase()
-          .replace(/^(cb|curebharat)\s*-?\s*/, '')
-          .replace(/[^a-z0-9]/g, ''); // strip spaces and punctuation for robust matching
-
-        const normPlan = normalize(customer.planName);
-
-        const matchedTemplate = templates.find(t => {
-          const normTemp = normalize(t.name);
-          return normTemp === normPlan;
-        }) || templates[0];
-        templateIdToUse = matchedTemplate._id;
-      }
+      const templateIdToUse = getTemplateForCustomer(customer);
 
       const res = await fetch('/api/pdf/send', {
         method: 'POST',
@@ -140,10 +204,11 @@ export default function CustomersPage() {
   };
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const currentIds = customers.map(c => c._id!);
     if (e.target.checked) {
-      setSelectedCustomerIds(customers.map(c => c._id!));
+      setSelectedCustomerIds(prev => Array.from(new Set([...prev, ...currentIds])));
     } else {
-      setSelectedCustomerIds([]);
+      setSelectedCustomerIds(prev => prev.filter(id => !currentIds.includes(id)));
     }
   };
 
@@ -446,6 +511,16 @@ export default function CustomersPage() {
           <div style={{ width: '1px', height: '24px', background: 'var(--border)' }} />
           <select 
             className="input search-input" 
+            style={{ maxWidth: '180px', cursor: 'pointer' }}
+            value={filterIncomplete ? 'true' : 'false'}
+            onChange={e => setFilterIncomplete(e.target.value === 'true')}
+          >
+            <option value="false">All Customers</option>
+            <option value="true">Incomplete Data</option>
+          </select>
+          <div style={{ width: '1px', height: '24px', background: 'var(--border)' }} />
+          <select 
+            className="input search-input" 
             style={{ maxWidth: '250px', cursor: 'pointer' }}
             value={selectedTemplateId}
             onChange={e => setSelectedTemplateId(e.target.value)}
@@ -495,7 +570,7 @@ export default function CustomersPage() {
                   <th style={{ width: '40px' }}>
                     <input
                       type="checkbox"
-                      checked={customers.length > 0 && selectedCustomerIds.length === customers.length}
+                      checked={customers.length > 0 && customers.every(c => selectedCustomerIds.includes(c._id!))}
                       onChange={handleSelectAll}
                       className="checkbox"
                     />
@@ -558,6 +633,18 @@ export default function CustomersPage() {
                     </td>
                     <td>
                       <div className="action-btns">
+                        <button
+                          className="btn btn-icon btn-ghost"
+                          title="Preview PDF"
+                          onClick={() => handlePreviewPDF(customer)}
+                          disabled={previewingPdf === customer._id}
+                        >
+                          {previewingPdf === customer._id ? (
+                            <div className="spinner-small" />
+                          ) : (
+                            <HiOutlineDocumentText size={16} />
+                          )}
+                        </button>
                         <button
                           className="btn btn-icon btn-ghost"
                           title="Send Email & PDF"

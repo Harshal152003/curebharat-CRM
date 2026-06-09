@@ -16,10 +16,18 @@ export default function PageManager() {
     <div className="page-mgr">
       <div className="page-tabs">
         {store.pages.map((page, i) => (
-          <button
+          <div
             key={i}
+            role="button"
+            tabIndex={0}
             className={`page-tab ${store.activePageIndex === i ? 'page-tab-active' : ''}`}
             onClick={() => store.setActivePageIndex(i)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                store.setActivePageIndex(i);
+              }
+            }}
           >
             <span className="page-tab-dot" style={{ background: pageTypeColors[page.pageType] }} />
             <span className="page-tab-label">{page.title || `Page ${i + 1}`}</span>
@@ -31,7 +39,7 @@ export default function PageManager() {
                 <HiOutlineTrash size={10} />
               </button>
             )}
-          </button>
+          </div>
         ))}
       </div>
 

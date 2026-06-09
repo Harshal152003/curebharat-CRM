@@ -11,23 +11,44 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
+    const incomplete = searchParams.get('incomplete') === 'true';
 
     const skip = (page - 1) * limit;
 
     // Build filter
     const filter: Record<string, unknown> = {};
+    const andConditions = [];
 
     if (search) {
-      filter.$or = [
-        { memberName: { $regex: search, $options: 'i' } },
-        { memberId: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } },
-      ];
+      andConditions.push({
+        $or: [
+          { memberName: { $regex: search, $options: 'i' } },
+          { memberId: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
+        ]
+      });
     }
 
     if (status) {
       filter.status = status;
+    }
+
+    if (incomplete) {
+      andConditions.push({
+        $or: [
+          { phone: 'N/A' },
+          { email: 'N/A' },
+          { nomineeName: 'N/A' },
+          { address: 'N/A' },
+          { relationship: 'N/A' },
+          { planName: 'N/A' }
+        ]
+      });
+    }
+
+    if (andConditions.length > 0) {
+      filter.$and = andConditions;
     }
 
     const [customers, total] = await Promise.all([

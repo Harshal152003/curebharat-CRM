@@ -26,55 +26,63 @@ export default function A4Preview() {
   return (
     <div className="a4-container">
       <div className="a4-page" style={bgStyle}>
-        {/* Watermark */}
-        {page.watermark?.enabled && (
-          <div className="a4-watermark" style={{ opacity: page.watermark.opacity, transform: `rotate(${page.watermark.rotation || -30}deg)` }}>
-            {page.watermark.type === 'text' ? (
-              <span style={{ fontSize: page.watermark.size || '80px', color: '#ccc' }}>{page.watermark.value}</span>
-            ) : (
-              <img src={page.watermark.value} alt="watermark" style={{ width: page.watermark.size || '200px' }} />
-            )}
-          </div>
-        )}
-
-        {/* Header */}
-        {page.header?.enabled && page.showGlobalHeader && (
-          <div className="a4-header" style={{ height: page.header.height, backgroundColor: page.header.backgroundColor, color: page.header.textColor }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0 24px', height: '100%' }}>
-              {page.header.logo && <img src={page.header.logo} alt="logo" style={{ height: 40 }} />}
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 16 }}>{page.header.companyName || 'Company Name'}</div>
-                {page.header.website && <div style={{ fontSize: 11, opacity: 0.7 }}>{page.header.website}</div>}
+        {page.html ? (
+          <div dangerouslySetInnerHTML={{ __html: page.html }} style={{ width: '100%', height: '100%', overflowY: 'auto' }} />
+        ) : (
+          <>
+            {/* Watermark */}
+            {page.watermark?.enabled && (
+              <div className="a4-watermark" style={{ opacity: page.watermark.opacity || 0.1 }}>
+                {page.watermark.type === 'text' ? (
+                  <span style={{ fontSize: '100px', fontWeight: 'bold', transform: 'rotate(-45deg)' }}>
+                    {page.watermark.value || 'WATERMARK'}
+                  </span>
+                ) : (
+                  <img src={page.watermark.value} alt="watermark" style={{ maxWidth: '80%', maxHeight: '80%', transform: 'rotate(-45deg)' }} />
+                )}
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* Content Area */}
-        <div className="a4-content">
-          {page.sections.length === 0 ? (
-            <div className="a4-empty">
-              <p>Click components from the left panel to add content</p>
-            </div>
-          ) : (
-            page.sections.map((section) => (
-              <SectionRenderer
-                key={section.id}
-                section={section}
-                pageIndex={store.activePageIndex}
-              />
-            ))
-          )}
-        </div>
+            {/* Header */}
+            {page.header?.enabled && page.showGlobalHeader && (
+              <div className="a4-header" style={{ height: page.header.height, backgroundColor: page.header.backgroundColor, color: page.header.textColor }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0 24px', height: '100%' }}>
+                  {page.header.logo && <img src={page.header.logo} alt="logo" style={{ height: 40 }} />}
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 16 }}>{page.header.companyName || 'Company Name'}</div>
+                    {page.header.website && <div style={{ fontSize: 11, opacity: 0.7 }}>{page.header.website}</div>}
+                  </div>
+                </div>
+              </div>
+            )}
 
-        {/* Footer */}
-        {page.footer?.enabled && page.showGlobalFooter && (
-          <div className="a4-footer" style={{ height: page.footer.height, backgroundColor: page.footer.backgroundColor, color: page.footer.textColor }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: '100%', fontSize: 10 }}>
-              <span>{page.footer.companyDetails || 'CureBharat Wellness Pvt. Ltd.'}</span>
-              {page.footer.showPageNumbers && <span>Page {store.activePageIndex + 1} of {store.pages.length}</span>}
+            {/* Content Area */}
+            <div className="a4-content">
+              {(page.sections?.length || 0) === 0 ? (
+                <div className="a4-empty">
+                  <p>Click components from the left panel to add content</p>
+                </div>
+              ) : (
+                page.sections!.map((section) => (
+                  <SectionRenderer
+                    key={section.id}
+                    section={section}
+                    pageIndex={store.activePageIndex}
+                  />
+                ))
+              )}
             </div>
-          </div>
+
+            {/* Footer */}
+            {page.footer?.enabled && page.showGlobalFooter && (
+              <div className="a4-footer" style={{ height: page.footer.height, backgroundColor: page.footer.backgroundColor, color: page.footer.textColor }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: '100%', fontSize: 10 }}>
+                  <span>{page.footer.companyDetails || 'CureBharat Wellness Pvt. Ltd.'}</span>
+                  {page.footer.showPageNumbers && <span>Page {store.activePageIndex + 1} of {store.pages.length}</span>}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
