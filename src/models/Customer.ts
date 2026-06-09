@@ -127,5 +127,10 @@ const CustomerSchema = new Schema<ICustomerDoc>(
 
 CustomerSchema.index({ memberName: 'text', memberId: 'text', email: 'text' });
 
-export default mongoose.models.Customer ||
-  mongoose.model<ICustomerDoc>('Customer', CustomerSchema);
+const getCustomerModel = () => {
+  // Use the CureBharatCRM database specifically for this model while keeping the default connection for templates
+  const db = mongoose.connection.useDb('CureBharatCRM', { useCache: true });
+  return db.models.Customer || db.model<ICustomerDoc>('Customer', CustomerSchema, '800customer data');
+};
+
+export default getCustomerModel();
