@@ -340,7 +340,9 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
     const shouldPaginateRawHtml = Boolean(
       page.html &&
       page.html.length > 15000 &&
-      page.pageType !== 'terms'
+      page.pageType !== 'terms' &&
+      page.pageType !== 'html' &&
+      page.pageType !== 'certificate'
     );
 
     if (shouldPaginateRawHtml) {

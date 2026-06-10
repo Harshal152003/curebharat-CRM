@@ -4,6 +4,7 @@ import { termsSampoornaPlusPagesHtml } from '@/lib/termsSampoornaPlus';
 import { termsSampoornaPremiumPagesHtml } from '@/lib/termsSampoornaPremium';
 import { termsSuperSurakshaPagesHtml } from '@/lib/termsSuperSuraksha';
 import { termsSurakshaSpecialPagesHtml } from '@/lib/termsSurakshaSpecial';
+import { termsSurakshaFinalPagesHtml } from '@/lib/termsSurakshaFinal';
 
 const canonicalTermsByTemplate: Record<string, string[]> = {
   'CureBharat Sampoorna Suraksha': termsSampoornaPagesHtml,
@@ -11,6 +12,7 @@ const canonicalTermsByTemplate: Record<string, string[]> = {
   'CureBharat Sampoorna Suraksha Premium': termsSampoornaPremiumPagesHtml,
   'CureBharat Super Suraksha': termsSuperSurakshaPagesHtml,
   'CureBharat Suraksha Special': termsSurakshaSpecialPagesHtml,
+  'Curebharat-Suraksha': termsSurakshaFinalPagesHtml,
 };
 
 const alwaysCanonicalTemplates = new Set<string>();
