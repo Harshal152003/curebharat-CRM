@@ -18,7 +18,7 @@ export function compilePlaceholders(text: string, customer: ICustomer): string {
     '{{gender}}': customer.gender || '',
     '{{phone}}': customer.phone || '',
     '{{email}}': customer.email || '',
-    '{{mis_holder}}': customer.misHolder || 'No',
+    '{{mis_holder}}': customer.masterSubscriptionHolder || 'No',
     '{{address}}': customer.address || '',
     '{{nominee_name}}': customer.nomineeName || '',
     '{{nominee_dob}}': formatDateDDMMYYYY(customer.nomineeDob),

@@ -13,20 +13,31 @@ export async function POST(request: Request) {
 
     const { customerId, templateId } = await request.json();
 
-    if (!customerId || !templateId) {
-      return NextResponse.json({ success: false, error: 'Customer and template are required' }, { status: 400 });
+    if (!customerId) {
+      return NextResponse.json({ success: false, error: 'Customer is required' }, { status: 400 });
     }
 
-    const [customer, template] = await Promise.all([
-      Customer.findById(customerId).lean(),
-      Template.findById(templateId).lean(),
-    ]);
-
+    const customer = await Customer.findById(customerId).lean();
     if (!customer) {
       return NextResponse.json({ success: false, error: 'Customer not found' }, { status: 404 });
     }
+
+    let template;
+    if (templateId && templateId !== 'auto') {
+      template = await Template.findById(templateId).lean();
+    } else {
+      // Auto-match logic
+      const templates = await Template.find().lean();
+      const normalize = (str: string) => str.toLowerCase()
+        .replace(/^(cb|curebharat)\s*-?\s*/, '')
+        .replace(/[^a-z0-9]/g, '');
+
+      const normPlan = normalize(customer.planName || '');
+      template = templates.find(t => normalize(t.name) === normPlan) || templates[0];
+    }
+
     if (!template) {
-      return NextResponse.json({ success: false, error: 'Template not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Template not found and no auto-match possible' }, { status: 404 });
     }
 
     if (!customer.email) {

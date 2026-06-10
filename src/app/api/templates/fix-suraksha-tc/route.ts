@@ -44,17 +44,101 @@ export async function POST() {
         pageIndex: index,
       }));
 
+    // The Protection Plan Benefits HTML exactly as requested
+    const protectionPlanBenefitsHtml = `
+      <div style="padding: 40px; height: 100%; display: flex; flex-direction: column; background: #fff;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
+          <img src="https://www.curebharat.com/Logo.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
+        </div>
+
+        <div style="text-align: center; font-size: 14px; font-weight: 700; text-decoration: underline; margin-bottom: 30px;">
+          Protection Plan Benefits-
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 11px;">
+          <thead>
+            <tr style="background: #007399; color: white;">
+              <th style="border: 2px solid #000; padding: 8px; text-align: left; width: 50%;">Protection Benefit (Age 18-65 Year)</th>
+              <th style="border: 2px solid #000; padding: 8px; text-align: left;">For Primary Member Only (1 Person)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700;">Accidental Death benefit</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700;">1000000</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700;">Permanent Partial Disability and Permanent total<br/>Disability</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700;">Up to 1000000</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; height: 50px; vertical-align: top;">Accidental Hospitalisation</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; vertical-align: top;">Up to 75000</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700;">Children Education Benefit- Up to 2 Children in case of<br/>Accidental Death and PTD</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700;">50000</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; height: 40px; vertical-align: top;">Ambulance Cover</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; vertical-align: top;">2000</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; height: 40px; vertical-align: top;">Burn</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; vertical-align: top;">10000</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; height: 50px; vertical-align: top;">Fracture</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; vertical-align: top;">10000</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; height: 60px; vertical-align: top;">Life Style Modification</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; vertical-align: top;">5000</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; height: 80px; vertical-align: middle;">Hospi Cash Benefit 1000 Per day for 30 Days in a Policy<br/>Year, (*24 Hours hospitalisation = 1 Day)</td>
+              <td style="border: 1px solid #000; padding: 8px; font-weight: 700; vertical-align: top;">30000</td>
+            </tr>
+            <tr style="background: #007399; height: 20px;">
+              <td style="border: 2px solid #000;" colspan="2"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top: 80px; font-size: 8px; color: #666; line-height: 1.5;">
+          *Protection Plan is only for the Primary Member age 18-65 Years in Good Health<br/>
+          ** Refer Terms & Conditions for coverage, claim and policy details
+        </div>
+
+        <div style="margin-top: auto; font-size: 11px; color: #333; line-height: 1.5;">
+          Registered Address- CureBharat Wellness Private Limited, 6th Floor, Hiranandani<br/>
+          Business Park, LightBridge, Andheri East Mumbai-400072
+        </div>
+      </div>
+    `;
+
+    const protectionPage = createRawHtmlPage(
+      basePages.length,
+      'Protection Plan Benefits',
+      protectionPlanBenefitsHtml
+    );
+    // Overwrite the type to be 'benefits' instead of 'terms'
+    protectionPage.pageType = 'benefits';
+
+    const allBasePages = [...basePages, protectionPage];
+
     // Create the new perfectly paginated terms pages
     const newTermsPages = termsSurakshaFinalPagesHtml.map((htmlContent, index) =>
       createRawHtmlPage(
-        basePages.length + index,
+        allBasePages.length + index,
         `Terms & Conditions - Page ${index + 1}`,
         htmlContent
       )
     );
 
     // Combine them
-    template.pages = [...basePages, ...newTermsPages];
+    template.pages = [...allBasePages, ...newTermsPages];
     template.pageCount = template.pages.length;
     
     // Save to DB

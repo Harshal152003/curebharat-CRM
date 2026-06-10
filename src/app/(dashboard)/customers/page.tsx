@@ -18,39 +18,14 @@ import {
 } from 'react-icons/hi';
 import * as XLSX from 'xlsx';
 import { ICustomer } from '@/types';
-
-export const isFieldIncomplete = (value: any, isDate: boolean = false) => {
-  if (value === undefined || value === null) return true;
-  if (typeof value === 'number' && value === 0) return true;
-  const strVal = String(value).trim();
-  if (['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'].includes(strVal)) return true;
-  if (isDate && ['2000-01-01', '1900-01-01'].includes(strVal)) return true;
-  return false;
-};
-
-const getIncompleteFields = (customer: ICustomer) => {
-  const incomplete = [];
-  if (isFieldIncomplete(customer.memberName)) incomplete.push('Member Name');
-  if (isFieldIncomplete(customer.phone)) incomplete.push('Phone');
-  if (isFieldIncomplete(customer.email)) incomplete.push('Email');
-  if (isFieldIncomplete(customer.address)) incomplete.push('Address');
-  if (isFieldIncomplete(customer.nomineeName)) incomplete.push('Nominee Name');
-  if (isFieldIncomplete(customer.relationship)) incomplete.push('Relationship');
-  if (isFieldIncomplete(customer.planName)) incomplete.push('Plan Name');
-  if (isFieldIncomplete(customer.dob, true)) incomplete.push('DOB');
-  if (isFieldIncomplete(customer.planStart, true)) incomplete.push('Plan Start');
-  if (isFieldIncomplete(customer.planEnd, true)) incomplete.push('Plan End');
-  if (isFieldIncomplete(customer.nomineeDob, true)) incomplete.push('Nominee DOB');
-  if (isFieldIncomplete(customer.coveragePrice)) incomplete.push('Coverage Price');
-  return incomplete;
-};
+import { isFieldIncomplete, getIncompleteFields as getDynamicIncompleteFields } from '@/lib/templateAnalyzer';
 
 export default function CustomersPage() {
   const router = useRouter();
   const [customers, setCustomers] = useState<ICustomer[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filterIncomplete, setFilterIncomplete] = useState(false);
+  const [filterStatus, setFilterStatus] = useState('all');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -59,6 +34,7 @@ export default function CustomersPage() {
   const [previewingPdf, setPreviewingPdf] = useState<string | null>(null);
   const [templates, setTemplates] = useState<any[]>([]);
   const [importProgress, setImportProgress] = useState<{current: number, total: number} | null>(null);
+  const [bulkSendProgress, setBulkSendProgress] = useState<{current: number, total: number, success: number, fail: number} | null>(null);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
 
@@ -82,7 +58,7 @@ export default function CustomersPage() {
         page: page.toString(),
         limit: '10',
         ...(search && { search }),
-        ...(filterIncomplete && { incomplete: 'true' })
+        ...(filterStatus !== 'all' && { filterType: filterStatus })
       });
       const res = await fetch(`/api/customers?${params}`);
       const data = await res.json();
@@ -97,7 +73,7 @@ export default function CustomersPage() {
       setLoading(false);
       // Removed setSelectedCustomerIds([]) so selection persists across pages
     }
-  }, [page, search, filterIncomplete]);
+  }, [page, search, filterStatus]);
 
   useEffect(() => {
     fetchCustomers();
@@ -247,7 +223,7 @@ export default function CustomersPage() {
 
   const handleSelectAllGlobally = async () => {
     try {
-      const res = await fetch(`/api/customers?limit=100000&search=${encodeURIComponent(search)}&incomplete=${filterIncomplete}`);
+      const res = await fetch(`/api/customers?limit=100000&search=${encodeURIComponent(search)}&filterType=${filterStatus}`);
       const data = await res.json();
       if (data.success) {
         setSelectedCustomerIds(data.data.map((c: any) => c._id));
@@ -259,10 +235,6 @@ export default function CustomersPage() {
   };
 
   const handleBulkSendEmail = async () => {
-    if (!templates.length) {
-      alert('No templates available to send');
-      return;
-    }
     if (selectedCustomerIds.length === 0) return;
 
     if (!confirm(`Are you sure you want to send emails/PDFs to ${selectedCustomerIds.length} customers?`)) return;
@@ -270,53 +242,53 @@ export default function CustomersPage() {
     let successCount = 0;
     let failCount = 0;
     let lastError = '';
+    const totalCount = selectedCustomerIds.length;
+    setBulkSendProgress({ current: 0, total: totalCount, success: 0, fail: 0 });
+    
+    // Chunk size of 5 for parallel execution
+    const chunkSize = 5;
+    for (let i = 0; i < selectedCustomerIds.length; i += chunkSize) {
+      const chunk = selectedCustomerIds.slice(i, i + chunkSize);
+      
+      await Promise.all(chunk.map(async (id) => {
+        // We set sending email to true for the UI, but it might flicker for fast chunks. 
+        // A global sending state might be better, but we'll keep the UI indicating progress.
+        setSendingEmail(id);
+        try {
+          const res = await fetch('/api/pdf/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              customerId: id,
+              templateId: selectedTemplateId || 'auto', 
+            }),
+          });
 
-    for (const id of selectedCustomerIds) {
-      setSendingEmail(id);
-      try {
-        // Find the customer's plan
-        const customer = customers.find(c => c._id === id);
-        if (!customer) throw new Error('Customer not found in state');
-
-        let templateIdToUse = selectedTemplateId;
-
-        if (!templateIdToUse) {
-          const normalize = (str: string) => str.toLowerCase()
-            .replace(/^(cb|curebharat)\s*-?\s*/, '')
-            .replace(/[^a-z0-9]/g, ''); // strip spaces and punctuation for robust matching
-
-          const normPlan = normalize(customer.planName);
-
-          const matchedTemplate = templates.find(t => {
-            const normTemp = normalize(t.name);
-            return normTemp === normPlan;
-          }) || templates[0];
-          templateIdToUse = matchedTemplate._id;
-        }
-
-        const res = await fetch('/api/pdf/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            customerId: id,
-            templateId: templateIdToUse, 
-          }),
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          successCount++;
-        } else {
+          const data = await res.json();
+          if (data.success) {
+            successCount++;
+          } else {
+            failCount++;
+            lastError = data.error || 'Unknown error';
+          }
+        } catch (error) {
+          console.error('Email send error:', error);
           failCount++;
-          lastError = data.error || 'Unknown error';
+          lastError = error instanceof Error ? error.message : 'Network error';
         }
-      } catch (error) {
-        console.error('Email send error:', error);
-        failCount++;
-        lastError = error instanceof Error ? error.message : 'Network error';
-      }
+        
+        // Update progress state after each promise resolves
+        setBulkSendProgress(prev => prev ? { 
+          ...prev, 
+          current: prev.current + 1, 
+          success: successCount, 
+          fail: failCount 
+        } : null);
+      }));
     }
+    
     setSendingEmail(null);
+    setBulkSendProgress(null);
     let msg = `Bulk send complete.\nSuccess: ${successCount}\nFailed: ${failCount}`;
     if (failCount > 0 && lastError) {
       msg += `\nLast error: ${lastError}`;
@@ -362,7 +334,7 @@ export default function CustomersPage() {
           nomineedob: 'nomineeDob', nominee1nomineesdob: 'nomineeDob',
           nomineegender: 'nomineeGender', nominee1nomineesgender: 'nomineeGender',
           members: 'membersCovered', memberscovered: 'membersCovered',
-          misholder: 'misHolder', mis: 'misHolder', misholders: 'misHolder'
+          misholder: 'masterSubscriptionHolder', mis: 'masterSubscriptionHolder', misholders: 'masterSubscriptionHolder', mastersubscriptionholder: 'masterSubscriptionHolder'
         };
 
         let lastErrorMsg = '';
@@ -408,11 +380,10 @@ export default function CustomersPage() {
             customerData.memberName = memberNameParts.filter(Boolean).join(' ');
           }
 
-          // Check for missing required fields BEFORE applying defaults
-          const requiredFields = ['memberName', 'phone', 'email', 'dob', 'address', 'planName', 'planStart', 'planEnd', 'coveragePrice', 'nomineeName', 'nomineeDob', 'relationship'];
-          const missing = requiredFields.filter(f => !customerData[f]);
-          if (missing.length > 0) {
-            missingReport.push(`Row ${i + 2} (${customerData.memberName || 'Unknown'}): missing ${missing.join(', ')}`);
+          // Check for missing required fields BEFORE applying defaults, using smart template logic
+          const incompleteForImport = getDynamicIncompleteFields(customerData as ICustomer, templates);
+          if (incompleteForImport.length > 0) {
+            missingReport.push(`Row ${i + 2} (${customerData.memberName || 'Unknown'}): missing ${incompleteForImport.join(', ')}`);
           }
 
           // Fix Enums for Gender
@@ -477,10 +448,10 @@ export default function CustomersPage() {
           customerData.nomineeDob = formatDate(customerData.nomineeDob);
           customerData.relationship = customerData.relationship || 'N/A';
           
-          if (customerData.misHolder) {
-            customerData.misHolder = String(customerData.misHolder).trim();
+          if (customerData.masterSubscriptionHolder) {
+            customerData.masterSubscriptionHolder = String(customerData.masterSubscriptionHolder).trim();
           } else {
-            customerData.misHolder = '';
+            customerData.masterSubscriptionHolder = '';
           }
 
           // Clean up numeric fields
@@ -558,6 +529,26 @@ export default function CustomersPage() {
         </div>
       )}
 
+      {bulkSendProgress && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'white', padding: '32px', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '340px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+            <div className="spinner-small" style={{ width: '48px', height: '48px', borderWidth: '4px', marginBottom: '24px' }}></div>
+            <h2 style={{ margin: 0, fontSize: '20px', fontFamily: 'Outfit', color: 'var(--foreground)' }}>Sending Bulk Emails...</h2>
+            <p style={{ marginTop: '8px', color: 'var(--foreground-dim)', fontSize: '15px' }}>
+              Processed: {bulkSendProgress.current} / {bulkSendProgress.total}
+            </p>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginTop: '12px' }}>
+              <span style={{ color: '#059669', fontWeight: 600 }}>Success: {bulkSendProgress.success}</span>
+              <span style={{ color: '#dc2626', fontWeight: 600 }}>Failed: {bulkSendProgress.fail}</span>
+            </div>
+            <div style={{ width: '100%', height: '8px', background: '#e5e7eb', borderRadius: '4px', marginTop: '12px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', background: 'var(--brand-primary)', width: `${(bulkSendProgress.current / bulkSendProgress.total) * 100}%`, transition: 'width 0.2s linear' }}></div>
+            </div>
+            <p style={{ marginTop: '16px', fontSize: '12px', color: 'var(--brand-secondary-light)', fontWeight: 500 }}>Please keep this page open...</p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="page-header-row">
         <div>
@@ -592,11 +583,12 @@ export default function CustomersPage() {
           <select 
             className="input search-input" 
             style={{ maxWidth: '180px', cursor: 'pointer' }}
-            value={filterIncomplete ? 'true' : 'false'}
-            onChange={e => setFilterIncomplete(e.target.value === 'true')}
+            value={filterStatus}
+            onChange={e => setFilterStatus(e.target.value)}
           >
-            <option value="false">All Customers</option>
-            <option value="true">Incomplete Data</option>
+            <option value="all">All Customers</option>
+            <option value="incomplete">Incomplete Data</option>
+            <option value="complete">Complete Data</option>
           </select>
           <div style={{ width: '1px', height: '24px', background: 'var(--border)' }} />
           <select 
@@ -681,7 +673,7 @@ export default function CustomersPage() {
               </thead>
               <tbody>
                  {customers.map((customer, index) => {
-                  const incompleteFields = getIncompleteFields(customer);
+                  const incompleteFields = getDynamicIncompleteFields(customer, templates);
                   const isIncomplete = incompleteFields.length > 0;
                   const isSelected = selectedCustomerIds.includes(customer._id!);
 

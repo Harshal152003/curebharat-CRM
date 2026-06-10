@@ -321,7 +321,7 @@ export async function POST() {
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.email}</div>
                   <div class="cb-lbl" style="width: 95px;">Email ID</div>
                   <div class="cb-sep">:</div>
-                  <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{email}}</div>
+                  <div class="cb-val" style="flex: 1; word-break: break-all; word-wrap: break-word;">{{email}}</div>
                 </div>
               </div>
               
@@ -338,7 +338,7 @@ export async function POST() {
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.location}</div>
                   <div class="cb-lbl" style="width: 120px;">Address</div>
                   <div class="cb-sep">:</div>
-                  <div class="cb-val" style="flex: 1; word-wrap: break-word; font-weight: 500; font-size: 11.5px; line-height: 1.4;">{{address}}</div>
+                  <div class="cb-val" style="flex: 1; word-wrap: break-word; font-weight: 700; font-size: 11.5px; line-height: 1.4;">{{address}}</div>
                 </div>
                 <div class="cb-field" style="margin-top: 15px;">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.user}</div>

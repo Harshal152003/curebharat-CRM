@@ -35,7 +35,7 @@ export interface ICustomer {
   gender: 'Male' | 'Female' | 'Other';
   phone: string;
   email: string;
-  misHolder: string;
+  masterSubscriptionHolder: string;
   address: string;
   nomineeName: string;
   nomineeDob: string;

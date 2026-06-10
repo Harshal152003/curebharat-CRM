@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Customer from '@/models/Customer';
+import Template from '@/models/Template';
+import { getRequiredFieldsForTemplate, PLACEHOLDER_FIELD_MAP } from '@/lib/templateAnalyzer';
 
 export async function GET(request: Request) {
   try {
@@ -11,7 +13,7 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
-    const incomplete = searchParams.get('incomplete') === 'true';
+    const filterType = searchParams.get('filterType') || 'all';
 
     const skip = (page - 1) * limit;
 
@@ -34,38 +36,81 @@ export async function GET(request: Request) {
       filter.status = status;
     }
 
-    if (incomplete) {
+    if (filterType === 'incomplete' || filterType === 'complete') {
       const missingStringValues = ['N/A', 'n/a', '', 'Pending', 'Pending KYC', 'Unknown'];
       const missingDateValues = ['2000-01-01', '1900-01-01', 'N/A', 'n/a', ''];
       
-      andConditions.push({
-        $or: [
-          { memberName: { $in: [...missingStringValues, null] } },
-          { memberName: { $exists: false } },
-          { phone: { $in: [...missingStringValues, null] } },
-          { phone: { $exists: false } },
-          { email: { $in: [...missingStringValues, null] } },
-          { email: { $exists: false } },
-          { address: { $in: [...missingStringValues, null] } },
-          { address: { $exists: false } },
-          { nomineeName: { $in: [...missingStringValues, null] } },
-          { nomineeName: { $exists: false } },
-          { relationship: { $in: [...missingStringValues, null] } },
-          { relationship: { $exists: false } },
-          { planName: { $in: [...missingStringValues, null] } },
-          { planName: { $exists: false } },
-          { dob: { $in: [...missingDateValues, null] } },
-          { dob: { $exists: false } },
-          { planStart: { $in: [...missingDateValues, null] } },
-          { planStart: { $exists: false } },
-          { planEnd: { $in: [...missingDateValues, null] } },
-          { planEnd: { $exists: false } },
-          { nomineeDob: { $in: [...missingDateValues, null] } },
-          { nomineeDob: { $exists: false } },
-          { coveragePrice: { $in: [0, null] } },
-          { coveragePrice: { $exists: false } }
-        ]
+      const templates = await Template.find({}, { name: 1, pages: 1, sections: 1 }).lean();
+      
+      const planConditions = [];
+      
+      for (const template of templates) {
+        const requiredFields = getRequiredFieldsForTemplate(template);
+        if (requiredFields.length === 0) continue;
+
+        const fieldMissingOr = requiredFields.map(field => {
+           const isDate = PLACEHOLDER_FIELD_MAP.find(m => m.field === field)?.isDate || false;
+           const missingVals = isDate ? missingDateValues : missingStringValues;
+           
+           if (field === 'coveragePrice') {
+              return { $or: [{ coveragePrice: { $in: [0, null, ''] } }, { coveragePrice: { $exists: false } }] };
+           }
+           if (field === 'membersCovered') {
+              return { $or: [{ membersCovered: { $in: [0, null, ''] } }, { membersCovered: { $exists: false } }] };
+           }
+           return {
+             $or: [
+               { [field]: { $in: [...missingVals, null] } },
+               { [field]: { $exists: false } }
+             ]
+           };
+        });
+
+        // Use regex for flexible matching between customer.planName and template.name
+        // E.g., template name "CureBharat Premium Wellness", customer might have "Premium Wellness" or "Curebharat-Premium Wellness"
+        // Actually, matching the first 5 chars of the core name usually works, or just regex the template name 
+        const coreName = template.name.replace(/^(cb|curebharat)\s*-?\s*/i, '').trim();
+        const escapedCoreName = coreName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        
+        planConditions.push({
+          $and: [
+            { planName: { $regex: new RegExp(escapedCoreName, 'i') } },
+            { $or: fieldMissingOr }
+          ]
+        });
+      }
+
+      // Fallback condition: If a customer's plan doesn't match any template (or is completely missing), 
+      // we just check if ANY basic field is missing (the old logic)
+      const allFields = PLACEHOLDER_FIELD_MAP.map(m => m.field);
+      const fallbackMissingOr = allFields.map(field => {
+         const isDate = PLACEHOLDER_FIELD_MAP.find(m => m.field === field)?.isDate || false;
+         const missingVals = isDate ? missingDateValues : missingStringValues;
+         if (field === 'coveragePrice') return { $or: [{ coveragePrice: { $in: [0, null, ''] } }, { coveragePrice: { $exists: false } }] };
+         if (field === 'membersCovered') return { $or: [{ membersCovered: { $in: [0, null, ''] } }, { membersCovered: { $exists: false } }] };
+         return { $or: [{ [field]: { $in: [...missingVals, null] } }, { [field]: { $exists: false } }] };
       });
+
+      // To apply fallback correctly without catching properly matched ones, we can just say:
+      // if NO templates matched, they are incomplete if basic fields are missing.
+      // But Mongoose makes it hard to do "if not matched by any previous $and block". 
+      // Instead, we just require `planName` to not be empty
+      planConditions.push({
+         $or: [
+            { planName: { $in: [...missingStringValues, null] } },
+            { planName: { $exists: false } }
+         ]
+      });
+
+      if (filterType === 'incomplete') {
+        andConditions.push({
+          $or: planConditions
+        });
+      } else if (filterType === 'complete') {
+        andConditions.push({
+          $nor: planConditions
+        });
+      }
     }
 
     if (andConditions.length > 0) {

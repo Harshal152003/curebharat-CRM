@@ -59,14 +59,14 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">7. Instalment Premium Conditions (If Applicable)</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">7.1 Grace Period</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">15 days allowed for premium payment</span></div>
+`), 
+  pageShell(2, `
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">7.2 Coverage Suspension</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">No coverage during unpaid period post due date</span></div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">7.3 Policy Lapse</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Policy cancels if premium not received within grace period</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Fresh policy will have new waiting periods</span></div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">7.4 Claim Adjustment</div>
-`), 
-  pageShell(2, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Outstanding premium will be:</span></div>
 <div style="margin-left: 28px; margin-bottom: 4px; display: flex;"><span style="margin-right: 8px;">○</span><span style="flex:1;">Deducted from claim OR</span></div>
 <div style="margin-left: 28px; margin-bottom: 4px; display: flex;"><span style="margin-right: 8px;">○</span><span style="flex:1;">Recovered before claim settlement</span></div>
@@ -95,6 +95,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Paid to:</span></div>
 <div style="margin-left: 28px; margin-bottom: 4px; display: flex;"><span style="margin-right: 8px;">○</span><span style="flex:1;">Nominee / Assignee</span></div>
 <div style="margin-left: 28px; margin-bottom: 4px; display: flex;"><span style="margin-right: 8px;">○</span><span style="flex:1;">Legal heir (with succession proof)</span></div>
+`), 
+  pageShell(3, `
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">10. DOCUMENTS REQUIRED FOR CLAIM</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Claim Form</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Discharge Summary</span></div>
@@ -108,8 +110,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">11. CLAIM DELAY CONDONATION</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Delay in claim intimation may be condoned:</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; color: #475569;"><strong>&rarr;</strong> If justified and accepted by insurer</div>
-`), 
-  pageShell(3, `
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">12. CUSTOMER SUPPORT</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Claims / Service:</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; color: #475569;"><strong>&rarr;</strong> Insurer Call Centre (24x7)</div>
@@ -133,6 +133,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">terms shall also apply to that individual.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">These Terms and Conditions outline the manner in which CureBharat  provides its services, including but not limited</div>
 <div style="margin-bottom: 8px; font-weight: 500;">to Telemedicine Consultations, Diagnostic Lab Tests, Doctor Consultations, Dietary Guidance, and Wellness Services</div>
+`), 
+  pageShell(4, `
 <div style="margin-bottom: 8px; font-weight: 500;">(collectively referred to as the "Services"), as well as CureBharat 's responsibilities and liabilities and your obligations</div>
 <div style="margin-bottom: 8px; font-weight: 500;">as a User. The Privacy Policy forms an integral part of these Terms and Conditions; therefore, we strongly encourage</div>
 <div style="margin-bottom: 8px; font-weight: 500;">you to review it to understand how CureBharat  protects and uses the Personal Data and Medical Information</div>
@@ -154,8 +156,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Elder Care.</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">A. WEBSITE / APPLICATION TERMS OF USE:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Please review these terms carefully. By continuing to use this website or app, you confirm your acceptance of our</div>
-`), 
-  pageShell(4, `
 <div style="margin-bottom: 8px; font-weight: 500;">The Terms of Use, Privacy Policy, any additional Service-specific terms, other applicable policies, and disclaimers</div>
 <div style="margin-bottom: 8px; font-weight: 500;">together form the "Agreement" governing your access and use of the Application/Website and Services. Any</div>
 <div style="margin-bottom: 8px; font-weight: 500;">modifications to the Agreement will be enforceable, and this Agreement supersedes all previous terms.</div>
@@ -173,6 +173,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">User.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">This refers to the dependent of a Primary User who has been designated as such and accesses and uses the services</div>
 <div style="margin-bottom: 8px; font-weight: 500;">on the Application/Website at the request and discretion of the Primary User.</div>
+`), 
+  pageShell(5, `
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">3. Content:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">The data and information available on the Application/Website may be classified as:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">a. Data and information created or provided by Unregistered Users, SP Registered Users, and Registered Users on</div>
@@ -199,8 +201,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">authorized or not. Immediately notify CureBharat  of any unauthorized use of your account or password. CureBharat</div>
 <div style="margin-bottom: 8px; font-weight: 500;">is not responsible for your losses or damages resulting from unauthorized use, but you could be liable for losses or</div>
 <div style="margin-bottom: 8px; font-weight: 500;">damages to CureBharat  or others due to such misuse.</div>
-`), 
-  pageShell(5, `
 <div style="margin-bottom: 8px; font-weight: 500;">d. You shall use the Application/Website and its features strictly in accordance with applicable Indian laws and only</div>
 <div style="margin-bottom: 8px; font-weight: 500;">for purposes intended under this Agreement.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">e. Limit your use of the Application/Website to India only. We are not responsible if you access Services from outside</div>
@@ -212,6 +212,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">User Consent &amp; Privacy:**</div>
 <div style="margin-bottom: 8px; font-weight: 500;">h. You must not use the Application/Website for any illegal, immoral, or offensive purpose, or any other purpose that</div>
 <div style="margin-bottom: 8px; font-weight: 500;">violates laws or regulations.</div>
+`), 
+  pageShell(6, `
 <div style="margin-bottom: 8px; font-weight: 500;">i. Do not interfere with, disrupt, or hinder the proper functioning of the Application/Website.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">j. You understand that during registration and use, you may receive communications from CureBharat  through your</div>
 <div style="margin-bottom: 8px; font-weight: 500;">registered contact information regarding registration, Services, transactions, or other relevant information.</div>
@@ -244,12 +246,12 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">Except where explicitly authorized by CureBharat , you agree not to reproduce, modify, sell, distribute, mirror, frame,</div>
 <div style="margin-bottom: 8px; font-weight: 500;">republish, download, transmit, or create derivative works based on CureBharat  Content, in whole or in part, by any</div>
 <div style="margin-bottom: 8px; font-weight: 500;">means. You must not remove or alter any copyright, trademark, or ownership notices.</div>
-`), 
-  pageShell(6, `
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">6. Rights in User Content:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">You acknowledge that you are the sole owner of all rights, including intellectual property rights, in the User Content</div>
 <div style="margin-bottom: 8px; font-weight: 500;">posted on the Application / Website or provided to CureBharat .</div>
 <div style="margin-bottom: 8px; font-weight: 500;">To the extent permitted by law, you grant CureBharat  a perpetual, irrevocable, worldwide, royalty-free license to use</div>
+`), 
+  pageShell(7, `
 <div style="margin-bottom: 8px; font-weight: 500;">such User Content, including rights to copy, distribute, display, reproduce, modify, adapt, and create derivative</div>
 <div style="margin-bottom: 8px; font-weight: 500;">works from the User Content.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">7. User Content and Privacy:</div>
@@ -289,11 +291,11 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">personal information to use any service, you specifically consent to our Terms and Conditions, Privacy Policy, and</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Data Collection Notice, authorizing the collection and processing of your personal information for specified purposes.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  is required by law to maintain the privacy and confidentiality of your personal information. We assure</div>
+`), 
+  pageShell(8, `
 <div style="margin-bottom: 8px; font-weight: 500;">you we take your privacy seriously and strive to maintain the privacy and confidentiality of information you provide</div>
 <div style="margin-bottom: 8px; font-weight: 500;">to us. However, we do not represent, warrant, or guarantee that our safeguards against unauthorized access are</div>
 <div style="margin-bottom: 8px; font-weight: 500;">foolproof.</div>
-`), 
-  pageShell(7, `
 <div style="margin-bottom: 8px; font-weight: 500;">Further, CureBharat  may need to access your medical information to address deficiencies, complaints, grievances, or</div>
 <div style="margin-bottom: 8px; font-weight: 500;">compliance requirements. You authorize CureBharat  to access and process your data in such cases.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Upon providing this information, we may share it with the concerned healthcare service provider (HSP), affiliates,</div>
@@ -329,6 +331,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">or omissions, etc.);</div>
 <div style="margin-bottom: 8px; font-weight: 500;">iv. When service is rendered under a schedule, our obligation is limited to making it available during the scheduled</div>
 <div style="margin-bottom: 8px; font-weight: 500;">time, also subject to (ii) and (iii);</div>
+`), 
+  pageShell(9, `
 <div style="margin-bottom: 8px; font-weight: 500;">v. When the registered user is outside our operational coverage.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  has no responsibility toward non-registered users for providing services. Our responsibility toward</div>
 <div style="margin-bottom: 8px; font-weight: 500;">registered users is limited to service provision per the terms of this Agreement.</div>
@@ -338,8 +342,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  reserves the right to add, remove, or modify functionality in its Services as deemed fit, and release</div>
 <div style="margin-bottom: 8px; font-weight: 500;">newer versions accordingly. All users will be notified upon such releases, and CureBharat  may automatically</div>
 <div style="margin-bottom: 8px; font-weight: 500;">upgrade all users to the latest version.</div>
-`), 
-  pageShell(8, `
 <div style="margin-bottom: 8px; font-weight: 500;">The Application/Website and Services may be subject to limitations such as storage space, bandwidth, unexpected</div>
 <div style="margin-bottom: 8px; font-weight: 500;">downtime, unavailability of HSPs, etc.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  may schedule, reschedule, or cancel appointments and switch HSPs at any time without prior notice.</div>
@@ -370,6 +372,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">c. To conduct studies, research, and analysis for the purpose of improving our information, analytics, services, and</div>
 <div style="margin-bottom: 8px; font-weight: 500;">technologies, as well as ensuring that content and advertising are tailored to your interests and preferences;</div>
 <div style="margin-bottom: 8px; font-weight: 500;">d. To contact you via phone, SMS, email, or third-party communication platforms (such as WhatsApp) regarding</div>
+`), 
+  pageShell(10, `
 <div style="margin-bottom: 8px; font-weight: 500;">appointments, technical matters, payment reminders, and security notifications;</div>
 <div style="margin-bottom: 8px; font-weight: 500;">e. To send promotional communications from us or our channel partners via SMS, email, postal mail, or third-party</div>
 <div style="margin-bottom: 8px; font-weight: 500;">communication platforms (such as WhatsApp, Facebook, etc.);</div>
@@ -386,8 +390,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">m. To aggregate anonymized personal information for research, statistical analysis, and business intelligence</div>
 <div style="margin-bottom: 8px; font-weight: 500;">purposes, and to sell or otherwise transfer such research, statistical, or intelligence data.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  may share aggregated or non-identifiable data with third parties and affiliates. Personal Information will</div>
-`), 
-  pageShell(9, `
 <div style="margin-bottom: 8px; font-weight: 500;">be retained for at least three years from your last interaction, or longer if required by law; transaction and</div>
 <div style="margin-bottom: 8px; font-weight: 500;">engagement history is kept for seven years after your account ends. Communications with CureBharat  and its</div>
 <div style="margin-bottom: 8px; font-weight: 500;">service providers are stored for the duration of your relationship and for seven years afterwards. Records of</div>
@@ -406,6 +408,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Abide by all terms and conditions;</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Provide accurate health and personal information;</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Follow instructions given by healthcare providers;</span></div>
+`), 
+  pageShell(11, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Do not alter or delete website content without permission;</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Do not decipher, decompile, reverse engineer, or disassemble the application/website.</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  Content:</div>
@@ -424,8 +428,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">discretion.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Belongs to someone else and for which you do not have sufficient legal rights.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Harms minors in any way.</span></div>
-`), 
-  pageShell(10, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Infringes any patent, trademark, copyright, or other proprietary rights; or violates any applicable</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">law.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Deceives or misleads recipients about the origin of messages, or communicates information that is</span></div>
@@ -438,6 +440,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">If CureBharat  believes you have violated any terms or conditions of the Agreement, it may, at its sole discretion:</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Suspend provision of services;</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Suspend your account until CureBharat  can determine whether there was a violation;</span></div>
+`), 
+  pageShell(12, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Suspend or terminate your account if it determines a violation occurred;</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Require compensation for any loss or damage caused to CureBharat  as a condition for lifting suspension;</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Take any other action permitted by law;</span></div>
@@ -465,8 +469,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">Agreement. You alone will be responsible for any consequences resulting from failure to pay the fees on time.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  has no obligation to compensate you in any form. To process payments, CureBharat  may need your</div>
 <div style="margin-bottom: 8px; font-weight: 500;">bank or credit card details; see our Privacy Policy for usage information. You will receive a fee receipt via email or</div>
-`), 
-  pageShell(11, `
 <div style="margin-bottom: 8px; font-weight: 500;">contact within seven business days of payment. No extra fees will be charged for storing or analyzing your personal</div>
 <div style="margin-bottom: 8px; font-weight: 500;">information, unless specified in paid packages or value-added services.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">14. EMI and Buy Now Pay Later Payment Method:</div>
@@ -474,6 +476,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">Application/Website:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">a. BNPL allows users to pay for services in instalments. When a user chooses BNPL, they transact with our lending</div>
 <div style="margin-bottom: 8px; font-weight: 500;">partner (and co-lender, if applicable). The lending partner provides credit to make purchases and pay later in</div>
+`), 
+  pageShell(13, `
 <div style="margin-bottom: 8px; font-weight: 500;">instalments. Credit approval checks may be conducted at their discretion before offering this facility.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  has no role to play pertaining to the offering of the</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Facility or the terms on which the Facility is provided by Lending</div>
@@ -509,7 +513,7 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Based on your package, you can claim either cashless service or reimbursement if you use a provider outside</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  .</div>
 `), 
-  pageShell(12, `
+  pageShell(14, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">If both reimbursement and cashless options are available, CureBharat   will prioritise cashless claims within</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">its network; only if this is not possible will reimbursement apply.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Unless stated otherwise in policy details, all documents submitted for claims must show a service date after</span></div>
@@ -544,6 +548,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">19. If further evidence is required to support a claim, CureBharat  may request additional documentation from the</div>
 <div style="margin-bottom: 8px; font-weight: 500;">subscriber.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">20. CureBharat   reserves the right to deny a claim at its sole discretion for reasons including, but not limited to:</div>
+`), 
+  pageShell(15, `
 <div style="margin-bottom: 8px; font-weight: 500;">a. Claims pertaining to non-healthcare expenses;</div>
 <div style="margin-bottom: 8px; font-weight: 500;">b. Claims that are clinical but unrelated to the underlying disease condition cited in the prescription or clinical note;</div>
 <div style="margin-bottom: 8px; font-weight: 500;">c. Claims lacking valid supporting documentation;</div>
@@ -551,8 +557,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">e. Prescriptions or clinical notes deemed outdated, defined as older than 15 days from the bill date for acute</div>
 <div style="margin-bottom: 8px; font-weight: 500;">ailments, or older than 90 days from the bill date for chronic ailments;</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Service date on the prescription, clinical note, or bill is before the package purchase date</span></div>
-`), 
-  pageShell(13, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Member name on documents does not match subscriber or tagged family member</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Incomplete documents attached to claim</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Claimed amount differs from that on the bill</span></div>
@@ -578,6 +582,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">period. CureBharat   also reserves the sole discretion to terminate or suspend OPD benefits associated with a specific</div>
 <div style="margin-bottom: 8px; font-weight: 500;">package. Customers will be notified of any changes.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">29. Outpatient benefits do not include any services related to inpatient (IPD) treatment, procedures, or follow-ups.</div>
+`), 
+  pageShell(16, `
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">30. If your purchased plan includes AYUSH-related claims, only consultations done by BAMS or BHMS physicians</div>
 <div style="margin-bottom: 8px; font-weight: 500;">registered with MCI/NMC registries will be eligible.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">31. Below are specific documentation guidelines for different categories of claims. These are in addition to the general</div>
@@ -589,8 +595,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">The prescribed medicines should be clearly listed on the bill.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Bills must state the total amount charged.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Unless specified otherwise, submit claims within 30 days from the prescription date.</span></div>
-`), 
-  pageShell(14, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">For acute ailments, the prescription date should be within 7 days before purchasing the medicines.</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">Consultation Claims Requirements:</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Attach both a prescription note and a bill or receipt from the attending physician indicating payment</span></div>
@@ -613,6 +617,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">bills, receipts, prescriptions, and details of clinical procedures from certified eye care professionals.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">iii. Unless otherwise noted, cosmetic procedures, lenses, frames, sunglasses, goggles, or associated equipment are</div>
 <div style="margin-bottom: 8px; font-weight: 500;">not covered under vision claims.</div>
+`), 
+  pageShell(17, `
 <div style="margin-bottom: 8px; font-weight: 500;">iv. Unless specified differently, claims must be submitted within 30 days of the prescription date.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">e. Dental Claims Requirements:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Dental claims, if applicable, only cover routine check-ups, cleanings, preventive treatments, fillings, extractions, root</div>
@@ -636,8 +642,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">Universal Immunization Program.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">iv. Submit claims within 30 days of prescription unless stated otherwise.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Ambulance Claims Requirements:</div>
-`), 
-  pageShell(15, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Ambulance claims are cashless unless specified otherwise.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Service is available only in designated pin codes within a 20 km radius.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Ambulances are provided for emergencies only and transport patients from their residence to the nearest</span></div>
@@ -652,6 +656,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">b. Home Health Services: Users can book specialized personnel for home-based healthcare using the</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Application/Website.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Infertility Claim Requirements:</div>
+`), 
+  pageShell(18, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Claims are limited to consultations, diagnostics, and medications related to infertility treatments when</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">covered.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Submit claims within 30 days of prescription unless specified otherwise.</span></div>
@@ -681,8 +687,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">use of the Application/Website or its content is strictly prohibited.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">g. You confirm that you have read and understood the Data Collection Notice and freely consent to the collection,</div>
 <div style="margin-bottom: 8px; font-weight: 500;">storage, and processing of your personal information for the purposes described therein, including login and account</div>
-`), 
-  pageShell(16, `
 <div style="margin-bottom: 8px; font-weight: 500;">details.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  is not liable to users or any third parties for claims or damages resulting from the termination or</div>
 <div style="margin-bottom: 8px; font-weight: 500;">suspension of user accounts, or actions related to such account changes.</div>
@@ -692,6 +696,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">discretion, with or without prior notice. Key service categories include:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Fair Usage Policy:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat ’s services are for non-commercial personal use only. We reserve the right to limit, suspend, disable, or</div>
+`), 
+  pageShell(19, `
 <div style="margin-bottom: 8px; font-weight: 500;">discontinue any service if it is used for commercial purposes or inappropriately. Our team regularly reviews the</div>
 <div style="margin-bottom: 8px; font-weight: 500;">platform to ensure proper use and prevent misuse.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">You must not use the Application/Website for illegal activities or anything prohibited by these Terms and Conditions</div>
@@ -731,10 +737,10 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  retains the right to accept or decline Teleconsultation requests from any user, based on stated reasons.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">If your request is rejected, you will be notified and given an explanation for the rejection.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Teleconsultations provided through the Application or Website are not intended for emergency situations. In case of</div>
-`), 
-  pageShell(17, `
 <div style="margin-bottom: 8px; font-weight: 500;">an emergency, please call an ambulance or visit the nearest hospital. We assume no responsibility or liability for any</div>
 <div style="margin-bottom: 8px; font-weight: 500;">injury, death, or disability resulting from a Healthcare Service Provider (HSP) rejecting or failing to address an</div>
+`), 
+  pageShell(20, `
 <div style="margin-bottom: 8px; font-weight: 500;">emergency situation that a user may experience.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">You acknowledge that while Teleconsultation will be provided with regard to your situation and its time sensitivity,</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  does not guarantee or advertise specific timelines for when Teleconsultation will be offered once</div>
@@ -770,12 +776,12 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">offered. The healthcare service provider (HSP) may notify you of this limitation, and by continuing with the</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Teleconsultation, you acknowledge and accept it.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Any resulting deficiency in quality may occur. In certain situations, the information transmitted may be insufficient</div>
+`), 
+  pageShell(21, `
 <div style="margin-bottom: 8px; font-weight: 500;">(for example, poor image resolution) to allow the service provider to make appropriate medical decisions. You agree to</div>
 <div style="margin-bottom: 8px; font-weight: 500;">share any additional information required by the healthcare service provider to ensure accurate medical decision</div>
 <div style="margin-bottom: 8px; font-weight: 500;">making.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">If the information obtained through teleconsultation and the initial call is not adequate, you may need to undergo</div>
-`), 
-  pageShell(18, `
 <div style="margin-bottom: 8px; font-weight: 500;">testing at a laboratory recommended by CureBharat  or the healthcare service provider.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">In rare cases, security protocols could fail, leading to a breach of your personal medical information. If this</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">occurs, you will be notified about the incident and the data that may have been lost or accessed. You</div>
@@ -808,6 +814,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">interaction will not be disseminated to researchers or third parties without your explicit written consent. Non</div>
 <div style="margin-bottom: 8px; font-weight: 500;">identifiable data may be shared with external entities such as data aggregators, medical journals, or researchers.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">b. No Doctor-Patient Relationship:</div>
+`), 
+  pageShell(22, `
 <div style="margin-bottom: 8px; font-weight: 500;">c. HSP's Services:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  acts as a transaction facilitator for interactions via the Application/Website. It does not advertise HSP</div>
 <div style="margin-bottom: 8px; font-weight: 500;">services or their quality. CureBharat  only ensures all HSPs on the platform are legally qualified to provide</div>
@@ -819,8 +827,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">We are not liable, directly or indirectly, for the authenticity of Services provided through the Application or Website.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">d. Information About HSP and Services:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Information on HSP and CureBharat  Services is for general reference only and may change or become outdated.</div>
-`), 
-  pageShell(19, `
 <div style="margin-bottom: 8px; font-weight: 500;">Please independently verify any information regarding an HSP before engaging with them via the Application or</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Website.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">e. Prescription Drugs:</div>
@@ -849,6 +855,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">access to various services and facilities, but CureBharat  is not itself an insurance company.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Wellness Services:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">As a Health Plan member, you and your beneficiaries can access certain wellness services within one year of starting</div>
+`), 
+  pageShell(23, `
 <div style="margin-bottom: 8px; font-weight: 500;">the plan. These include:</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Consultations: Free physical or remote appointments with general practitioners or specialists, limited to a</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">specified number per year.</div>
@@ -864,8 +872,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Medication: Buy medication on the CureBharat  App/Website at a 50% discount with any valid prescription.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Home-Care Services: If recommended by a physician, get home-care services (including physiotherapy,</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">nursing, and living assistance) at a 20% discount.</div>
-`), 
-  pageShell(20, `
 <div style="margin-bottom: 8px; font-weight: 500;">Physical OPD Services: If prescribed, you can attend OPD consultations with CureBharat  network providers at a 15%</div>
 <div style="margin-bottom: 8px; font-weight: 500;">discount. Non-network consultations may be reimbursed up to a set amount.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Terms for Wellness Services:</div>
@@ -884,6 +890,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">these Terms and Conditions does not constitute sufficient acceptance of the specific terms relating to individual</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Wellness Services as provided by CureBharat . We also recommend reviewing the policy documents of our insurance</div>
 <div style="margin-bottom: 8px; font-weight: 500;">partners, accessible via their respective websites, for further information.</div>
+`), 
+  pageShell(24, `
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  reserves the right to deny any medical claims submitted by you as the primary policyholder if it is</div>
 <div style="margin-bottom: 8px; font-weight: 500;">determined that you failed to disclose or declare any pre-existing diseases or medical conditions at the time of</div>
 <div style="margin-bottom: 8px; font-weight: 500;">enrolling in the Health Plan.</div>
@@ -907,8 +915,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">pricing, and scheduling. You will receive detailed service information and may proceed as instructed.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Process for Customer Onboarding and Initiating Coaching Sessions:</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">A CureBharat  customer service representative will contact you within seven days of purchasing the policy to</span></div>
-`), 
-  pageShell(21, `
 <div style="margin-bottom: 8px; font-weight: 500;">explain the policy components, benefits, and service availment procedures.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Your first annual health check, included in your plan, will be scheduled based on your availability.</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">Alternatively, you may choose to schedule the health check at a later date.</div>
@@ -919,6 +925,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">Home Care Services:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  provides an extensive range of home-based healthcare services accessible through the Application or</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Website, either directly or via partners. Your engagement with CureBharat  is governed by the terms outlined below.</div>
+`), 
+  pageShell(25, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Users may select the specific types and scope of services offered on the Application or Website. CureBharat</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">is responsible for ensuring delivery of these services, either directly or through third-party providers.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Once selected, services cannot be modified or expanded in scope. Home-based services will be provided only</span></div>
@@ -949,13 +957,13 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">services, dementia care.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Emergency: Ambulance facilitation, hospitalization help, hospital discharge assistance, comprehensive post</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">discharge services (e.g., nursing, attendants, medical supplies).</div>
-`), 
-  pageShell(22, `
 <div style="margin-bottom: 8px; font-weight: 500;">Hospitalization Help Services:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">For certain care package plans, CureBharat  offers assistance to Users on a best-effort basis, supported by a</div>
 <div style="margin-bottom: 8px; font-weight: 500;">helpline, to help during hospitalization needs. This support may involve CureBharat  staff—either in person or over</div>
 <div style="margin-bottom: 8px; font-weight: 500;">the phone—assisting with User admissions at partner hospitals. Assistance can also include visiting the patient</div>
 <div style="margin-bottom: 8px; font-weight: 500;">during hospital visiting hours on subsequent days, liaising with doctors or hospital staff, and supporting the patient</div>
+`), 
+  pageShell(26, `
 <div style="margin-bottom: 8px; font-weight: 500;">during their transition back home. However, CureBharat  does not accept responsibility if partner hospitals cannot</div>
 <div style="margin-bottom: 8px; font-weight: 500;">admit patients due to unavailable beds, fail to provide appropriate treatment as needed, or encounter internal issues</div>
 <div style="margin-bottom: 8px; font-weight: 500;">that might affect care. Under this service, CureBharat  is not liable for medical bills, advance payments, or other</div>
@@ -992,10 +1000,10 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">Services are non-transferable; only the individual whose name the test/health package was assigned during booking</div>
 <div style="margin-bottom: 8px; font-weight: 500;">may avail of the Services.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">To utilize the Services, bookings must be completed at least one day in advance before 5 p.m. on business days. For</div>
+`), 
+  pageShell(27, `
 <div style="margin-bottom: 8px; font-weight: 500;">bookings made after 5 p.m., sample collection will occur on the next business day following the subsequent business</div>
 <div style="margin-bottom: 8px; font-weight: 500;">day.</div>
-`), 
-  pageShell(23, `
 <div style="margin-bottom: 8px; font-weight: 500;">You are required to present a photo identification card and Your Order ID when visiting the testing facility or during</div>
 <div style="margin-bottom: 8px; font-weight: 500;">home service.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Strict adherence to all instructions or guidelines provided by CureBharat  on the Application / Website prior to</div>
@@ -1031,6 +1039,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">For bookings made after 5 p.m. on a business day for...</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">Sample collection will take place on the business day following your booking. You may cancel or reschedule within</div>
 <div style="margin-bottom: 8px; font-weight: 500;">the next five business days, as long as you do so before 5 p.m. on the next business day. If you don't act within this</div>
+`), 
+  pageShell(28, `
 <div style="margin-bottom: 8px; font-weight: 500;">timeframe, your right to claim services and any fees paid will be forfeited by CureBharat . If you fail to visit the</div>
 <div style="margin-bottom: 8px; font-weight: 500;">testing facility or provide a sample during home service on the scheduled date, your rights and fees will also be</div>
 <div style="margin-bottom: 8px; font-weight: 500;">forfeited.</div>
@@ -1040,8 +1050,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">Elder care services promote senior health and safety through regular assessments, emergency support, and</div>
 <div style="margin-bottom: 8px; font-weight: 500;">advanced monitoring devices. Misuse of resources or repeated false alarms may result in restrictions.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">a. Health Care Manager (HCM): A healthcare professional assists beneficiaries with health concerns. Depending on</div>
-`), 
-  pageShell(24, `
 <div style="margin-bottom: 8px; font-weight: 500;">product coverage, services may include:</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Monthly health assessments and medical summaries.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Coordination with other providers for comprehensive home or hospital care, which may incur charges</span></div>
@@ -1067,6 +1075,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Ambulance travel from the emergency site to the hospital counts as one visit; subsequent transfers may be</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">charged per plan terms.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Coverage includes up to a 20 km radius from the subscriber’s primary address noted during plan purchase.</span></div>
+`), 
+  pageShell(29, `
 <div style="margin-bottom: 8px; font-weight: 500;">Requests for service outside the coverage area will be handled on a best-effort basis and may incur charges.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Fall and Health Vitals Monitoring Devices: The health vitals monitoring device is essential for delivering Emergency</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Response Services, determining the beneficiary's location, and dispatching an ambulance. If the device is lost, the</div>
@@ -1082,8 +1092,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">fall detection devices. It is your responsibility to procure the SIM card and pay monthly bills for data and</div>
 <div style="margin-bottom: 8px; font-weight: 500;">telephony services. CureBharat   is not liable for any failure of emergency triggers if the SIM card is</div>
 <div style="margin-bottom: 8px; font-weight: 500;">deactivated due to billing or other issues.</div>
-`), 
-  pageShell(25, `
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Emergency response toll-free services can be accessed without remote monitoring devices by dialling the toll</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">free helpdesk number directly from a phone. It is recommended to communicate emergencies by calling the</div>
 <div style="margin-bottom: 8px; font-weight: 500;">toll-free number, rather than relying solely on the remote monitoring device to trigger a response.</div>
@@ -1104,6 +1112,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  will not refund payments if cancellation occurs more than thirty (30) days after payment or if you have</div>
 <div style="margin-bottom: 8px; font-weight: 500;">used CureBharat 's services.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Sub-contracting:</div>
+`), 
+  pageShell(30, `
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  may sub-contract services to third parties as needed but remains primarily responsible to users.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">3. Confidentiality:</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  will keep your information confidential and will only disclose it if legally required, providing notice so</div>
@@ -1128,8 +1138,6 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">information is untrue, user is critical, unstable, or deceased, service poses a risk, payment is overdue, cooperation</div>
 <div style="margin-bottom: 8px; font-weight: 500;">fails, or resources are insufficient. General Legal Terms and payment terms survive termination.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Modifications:</div>
-`), 
-  pageShell(26, `
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  can suspend, withdraw, restrict, or change any non-paid version of products or services at any time</div>
 <div style="margin-bottom: 8px; font-weight: 500;">without notice. Updates to Terms and Conditions will be sent by email or require acceptance upon login. If you</div>
 <div style="margin-bottom: 8px; font-weight: 500;">disagree, stop using the Application/Website and Services. You will be notified of changes to the Application/Website</div>
@@ -1144,6 +1152,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">written in English and sent by email or courier to the addresses specified by each party. Waivers and consents must</div>
 <div style="margin-bottom: 8px; font-weight: 500;">be documented and signed. This Agreement represents the full understanding between the parties and does not</div>
 <div style="margin-bottom: 8px; font-weight: 500;">include terms beyond those referenced within it.</div>
+`), 
+  pageShell(31, `
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  is not responsible for any downtime, delays, or unavailability of the Application or Website due to</div>
 <div style="margin-bottom: 8px; font-weight: 500;">circumstances beyond its reasonable control, such as cyber-attacks, natural disasters, government actions, floods,</div>
 <div style="margin-bottom: 8px; font-weight: 500;">fires, earthquakes, civil unrest, terrorism, strikes, pandemics, labor issues, internet provider failures, or denial-of</div>
@@ -1172,14 +1182,14 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">"General Practitioner" is a doctor with an MBBS degree licensed to practice medicine in India.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">"Healthcare Service Providers" or "HSPs" are third parties such as clinics or hospitals listed on the</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">Application or Website, including qualified doctors, nurses, paramedical staff, physiotherapists, consultants,</div>
-`), 
-  pageShell(27, `
 <div style="margin-bottom: 8px; font-weight: 500;">medical equipment suppliers, laboratory providers, phlebotomists, pharmacists, and other ancillary</div>
 <div style="margin-bottom: 8px; font-weight: 500;">healthcare providers who interact with Users as part of the Services.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">"Health check up" is a thorough physical examination involving various tests based on age and sex to</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">ensure good health.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">"HSP Registered Users" are Registered Users whose profiles have unique identifiers, such as a professional</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">registration number, UHID (unique health identification), or UMR (unique medical record). HSP Registered</div>
+`), 
+  pageShell(32, `
 <div style="margin-bottom: 8px; font-weight: 500;">Users may have restricted access to certain areas of the Application or Website.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">"Network Provider" means physicians, hospitals, clinics, diagnostic centres, or other health providers</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">enlisted by CureBharat  to offer medical services to product members.</div>
@@ -1213,7 +1223,7 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">family members named as beneficiaries at the time of purchase and permitted under the terms of the Product.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">22. "Product Brochure" includes the Product purchase documents, brochure, and all other documents provided to the</div>
 `), 
-  pageShell(28, `
+  pageShell(33, `
 <div style="margin-bottom: 8px; font-weight: 500;">Beneficiary upon enrolment, including flyers, inclusions, exclusions, and other terms and conditions.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">23. "Product Coverage" refers to the extent and nature of the bundle of benefits available to the Beneficiary as part of</div>
 <div style="margin-bottom: 8px; font-weight: 500;">the Product.</div>
@@ -1248,14 +1258,14 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  assumes no responsibility for, and shall not be liable for, any damages to or viruses that may infect</div>
 <div style="margin-bottom: 8px; font-weight: 500;">User's equipment due to access, use, or browsing of the Application/Website, or downloading any material, data,</div>
 <div style="margin-bottom: 8px; font-weight: 500;">text, images, video, or audio content from the Application/Website. If a User is dissatisfied with the</div>
+`), 
+  pageShell(34, `
 <div style="margin-bottom: 8px; font-weight: 500;">Application/Website, the User’s exclusive remedy is to discontinue its use.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Neither CureBharat  nor its contractors and agents (including HSPs) will be held monetarily or otherwise liable in any</div>
 <div style="margin-bottom: 8px; font-weight: 500;">incident where no medical or procedural negligence by CureBharat  or its contractors and agents is proven.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Please note, use of the Application/Website or any Services does not include provision of a computer, mobile device,</div>
 <div style="margin-bottom: 8px; font-weight: 500;">or other necessary equipment required for access. To utilize the Application/Website, Users must have internet</div>
 <div style="margin-bottom: 8px; font-weight: 500;">connectivity and appropriate devices.</div>
-`), 
-  pageShell(29, `
 <div style="margin-bottom: 8px; font-weight: 500;">Telecommunication links: CureBharat  shall not be responsible or liable for any costs incurred in procuring equipment,</div>
 <div style="margin-bottom: 8px; font-weight: 500;">telephones, or any other expenses you may incur in connection with the use of the platform.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">CureBharat  makes no warranty or representation that any errors in the application or website will be corrected</div>
@@ -1283,6 +1293,8 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">13. Master and transaction data, and other data stored in your user account</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">14. Internet Protocol address, browser type, browser language, referring URL, files accessed, errors generated, time</div>
 <div style="margin-bottom: 8px; font-weight: 500;">zone, operating system, and other visitor details collected in log files</div>
+`), 
+  pageShell(35, `
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">15. User tracking information such as, but not limited to, device ID, Advertising ID, etc.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">16. Any other information willingly shared by you</div>
 `), 
