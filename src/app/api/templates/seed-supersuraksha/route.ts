@@ -384,21 +384,21 @@ export async function POST() {
               <div style="flex: 1; display: flex; flex-direction: column; gap: 18px; min-width: 0;">
                 <div class="cb-field">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.calendar}</div>
-                  <div class="cb-lbl" style="width: 120px;">Coverage Start Date</div>
+                  <div class="cb-lbl" style="width: 145px; min-width: 145px; max-width: 145px; white-space: nowrap;">Coverage Start Date</div>
                   <div class="cb-sep">:</div>
-                  <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{plan_start}}</div>
+                  <div class="cb-val" style="flex: 1; word-wrap: break-word; white-space: nowrap;">{{plan_start}}</div>
                 </div>
                 <div class="cb-field">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.calendar}</div>
-                  <div class="cb-lbl" style="width: 120px;">Coverage End Date</div>
+                  <div class="cb-lbl" style="width: 145px; min-width: 145px; max-width: 145px; white-space: nowrap;">Coverage End Date</div>
                   <div class="cb-sep">:</div>
-                  <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{plan_end}}</div>
+                  <div class="cb-val" style="flex: 1; word-wrap: break-word; white-space: nowrap;">{{plan_end}}</div>
                 </div>
                 <div class="cb-field">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.shield}</div>
-                  <div class="cb-lbl" style="width: 120px;">Plan Name/ Type</div>
+                  <div class="cb-lbl" style="width: 120px; min-width: 120px; max-width: 120px; white-space: nowrap;">Plan Name/ Type</div>
                   <div class="cb-sep">:</div>
-                  <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{plan_name}}</div>
+                  <div class="cb-val" style="flex: 1; word-wrap: break-word; white-space: nowrap;">{{plan_name}}</div>
                 </div>
               </div>
 
@@ -413,9 +413,9 @@ export async function POST() {
                 </div>
                 <div class="cb-field" style="margin-top: 10px;">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.users}</div>
-                  <div class="cb-lbl" style="width: 120px;">Members Covered</div>
+                  <div class="cb-lbl" style="width: 120px; min-width: 120px; max-width: 120px; white-space: nowrap;">Members Covered</div>
                   <div class="cb-sep">:</div>
-                  <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{members_covered}}</div>
+                  <div class="cb-val" style="flex: 1; word-wrap: break-word; white-space: nowrap;">{{members_covered}}</div>
                 </div>
               </div>
             </div>
