@@ -428,8 +428,10 @@ export async function POST() {
     const page3Html = `
       <div style="padding: 40px; height: 100%; display: flex; flex-direction: column; background: #fff;">
         <!-- Header -->
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-          <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+          <div style="width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; margin-bottom: 5px;">
+            <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+          </div>
         </div>
 
         <div style="text-align: center; font-size: 14px; font-weight: 700; text-decoration: underline; margin-bottom: 20px; text-transform: uppercase;">
@@ -533,8 +535,10 @@ export async function POST() {
     const page4Html = `
       <div style="padding: 40px; height: 100%; display: flex; flex-direction: column; background: #fff;">
         <!-- Header -->
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-          <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+          <div style="width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; margin-bottom: 5px;">
+            <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+          </div>
         </div>
 
         <div style="text-align: center; font-size: 14px; font-weight: 700; text-decoration: underline; margin-bottom: 30px;">
