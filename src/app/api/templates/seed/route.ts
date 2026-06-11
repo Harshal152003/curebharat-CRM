@@ -512,7 +512,7 @@ export async function POST() {
           </tbody>
         </table>
 
-        <div style="margin-top: auto; font-size: 11px; color: #333; line-height: 1.5;">
+        <div style="margin-top: 40px; font-size: 11px; color: #333; line-height: 1.5;">
           Registered Address- CureBharat Wellness Private Limited, 6th Floor, Hiranandani<br/>
           Business Park, LightBridge, Andheri East Mumbai-400072
         </div>
@@ -587,7 +587,7 @@ export async function POST() {
           ** Refer Terms & Conditions for coverage, claim and policy details
         </div>
 
-        <div style="margin-top: auto; font-size: 11px; color: #333; line-height: 1.5;">
+        <div style="margin-top: 40px; font-size: 11px; color: #333; line-height: 1.5;">
           Registered Address- CureBharat Wellness Private Limited, 6th Floor, Hiranandani<br/>
           Business Park, LightBridge, Andheri East Mumbai-400072
         </div>
