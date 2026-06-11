@@ -49,7 +49,7 @@ export async function POST() {
       <div style="padding: 40px; height: 100%; display: flex; flex-direction: column; background: #fff;">
         <!-- Header -->
         <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-          <img src="https://www.curebharat.com/Logo.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
+          <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
         </div>
 
         <div style="text-align: center; font-size: 14px; font-weight: 700; text-decoration: underline; margin-bottom: 30px;">

@@ -64,7 +64,7 @@ export async function POST() {
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; display: flex; flex-direction: column; padding: 60px;">
           <!-- Logo -->
           <div style="margin-bottom: 250px;">
-            <img src="https://www.curebharat.com/Logo.png" alt="CureBharat Logo" style="height: 100px; object-fit: contain;" />
+            <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="height: 100px; object-fit: contain;" />
           </div>
 
           <!-- Title -->
@@ -82,7 +82,7 @@ export async function POST() {
       <div style="padding: 40px 50px; height: 100%; display: flex; flex-direction: column; background: #fff;">
         <!-- Header -->
         <div style="display: flex; justify-content: flex-end; margin-bottom: 40px;">
-          <img src="https://www.curebharat.com/Logo.png" alt="CureBharat Logo" style="height: 90px; object-fit: contain;" />
+          <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="height: 90px; object-fit: contain;" />
         </div>
 
         <!-- Welcome Text -->
@@ -231,7 +231,7 @@ export async function POST() {
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
             <!-- Logo from URL -->
             <div style="flex: 1; display: flex; justify-content: center; padding-right: 15px;">
-              <img src="https://www.curebharat.com/Logo.png" alt="CureBharat Logo" style="height: 110px; object-fit: contain;" />
+              <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="height: 110px; object-fit: contain;" />
             </div>
 
             <!-- Divider -->
@@ -429,7 +429,7 @@ export async function POST() {
       <div style="padding: 40px; height: 100%; display: flex; flex-direction: column; background: #fff;">
         <!-- Header -->
         <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-          <img src="https://www.curebharat.com/Logo.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
+          <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
         </div>
 
         <div style="text-align: center; font-size: 14px; font-weight: 700; text-decoration: underline; margin-bottom: 20px; text-transform: uppercase;">
@@ -534,7 +534,7 @@ export async function POST() {
       <div style="padding: 40px; height: 100%; display: flex; flex-direction: column; background: #fff;">
         <!-- Header -->
         <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-          <img src="https://www.curebharat.com/Logo.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
+          <img src="https://res.cloudinary.com/dn65pq1ej/image/upload/v1780915274/Logo_kjqrdc.png" alt="CureBharat Logo" style="height: 70px; object-fit: contain;" />
         </div>
 
         <div style="text-align: center; font-size: 14px; font-weight: 700; text-decoration: underline; margin-bottom: 30px;">
