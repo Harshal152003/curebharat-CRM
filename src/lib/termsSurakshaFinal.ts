@@ -262,7 +262,7 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">as Medical Information—to the Application / Website. This information may be accessed by CureBharat  and/or</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Healthcare Service Providers (HSPs) during service provision. If you are a Secondary User, your information may be</div>
 <div style="margin-bottom: 8px; font-weight: 500;">submitted by the Primary User whose account you are using. If you have not lawfully authorized the Primary User to</div>
-<div style="margin-bottom: 8px; font-weight: 500;">do so, please contact us immediately via email at support@CureBharat .com or phone at +91 1800 2020 600.</div>
+<div style="margin-bottom: 8px; font-weight: 500;">do so, please contact us immediately via email at support@CureBharat .com.</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Personal Information may be collected when you use the Application / Website and its features. Please refer to our</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Privacy Policy and Data Collection Notice for details regarding collection, storage, use, processing, transfer, and</div>
 <div style="margin-bottom: 8px; font-weight: 500;">disclosure of such information.</div>
@@ -909,7 +909,7 @@ export const termsSurakshaFinalPagesHtml: string[] = [
 <div style="margin-bottom: 8px; font-weight: 500;">lifestyle management, home care, and general practitioner teleconsultations,</div>
 <div style="margin-bottom: 8px; font-weight: 500;">Specialist teleconsultation and comprehensive health check-up services are available through the following steps:</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Submit a service request via the designated icon on the Application or Website, or by contacting CureBharat</span></div>
-<div style="margin-bottom: 8px; font-weight: 500;">Customer Service at 1800 2020 600 (Monday to Sunday).</div>
+<div style="margin-bottom: 8px; font-weight: 500;">Customer Service.</div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">Verify your registered mobile number and policy details.</span></div>
 <div style="margin-left: 12px; margin-bottom: 6px; display: flex;"><span style="margin-right: 8px;">•</span><span style="flex:1;">A CureBharat  representative will provide you with information regarding the process for availing the service,</span></div>
 <div style="margin-bottom: 8px; font-weight: 500;">pricing, and scheduling. You will receive detailed service information and may proceed as instructed.</div>

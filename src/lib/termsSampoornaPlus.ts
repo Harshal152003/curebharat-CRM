@@ -494,7 +494,7 @@ export const termsSampoornaPlusPagesHtml: string[] = [
           In the course of your interaction with the Application / Website or CureBharat services, certain identifiable personal information may be required from you. The processing and usage of such information is governed by these Terms and Conditions, the Privacy Policy, and the applicable Data Collection Notice.
         </p>
         <p style="margin-bottom: 8px; text-align: justify;">
-          You may upload identifiable health information—including physical, physiological, and mental health data, as well as Medical Information—to the Application / Website. This information may be accessed by CureBharat and/or Healthcare Service Providers (HSPs) during service provision. If you are a Secondary User, your information may be submitted by the Primary User whose account you are using. If you have not lawfully authorized the Primary User to do so, please contact us immediately via email at support@CureBharat.com or phone at +91 1800 2020 600.
+          You may upload identifiable health information—including physical, physiological, and mental health data, as well as Medical Information—to the Application / Website. This information may be accessed by CureBharat and/or Healthcare Service Providers (HSPs) during service provision. If you are a Secondary User, your information may be submitted by the Primary User whose account you are using. If you have not lawfully authorized the Primary User to do so, please contact us immediately via email at support@CureBharat.com.
         </p>
       </div>
     </div>
