@@ -18,7 +18,7 @@ export interface ICustomerDoc extends Document {
   planEnd: string;
   coverageDetails: string;
   coveragePrice: number;
-  membersCovered: number;
+  membersCovered: string;
   status: 'active' | 'inactive' | 'expired';
   profileImage?: string;
   createdAt: Date;
@@ -107,8 +107,8 @@ const CustomerSchema = new Schema<ICustomerDoc>(
       required: true,
     },
     membersCovered: {
-      type: Number,
-      default: 1,
+      type: String,
+      default: '1',
     },
     status: {
       type: String,

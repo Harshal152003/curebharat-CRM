@@ -46,7 +46,7 @@ export interface ICustomer {
   planEnd: string;
   coverageDetails: string;
   coveragePrice: number;
-  membersCovered: number;
+  membersCovered: string;
   status: 'active' | 'inactive' | 'expired';
   profileImage?: string;
   createdAt?: Date;

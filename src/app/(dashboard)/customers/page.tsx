@@ -444,6 +444,18 @@ export default function CustomersPage() {
           customerData.planStart = formatDate(customerData.planStart);
           customerData.planEnd = formatDate(customerData.planEnd);
           customerData.coveragePrice = customerData.coveragePrice || 0;
+          
+          const planMap: Record<string, string> = {
+            'curebharat-suraksha': '2A+2C',
+            'cb-sampoorna suraksha premium': 'Self + Spouse + 2 Children + 2 Parents',
+            'cb-sampoorna suraksha plus': 'Self + Spouse + 2 Children + 2 Parents',
+            'cb-suraksha special': 'Self + Spouse + 2 Children',
+            'curebharat sampoorna suraksha special': 'Self + Spouse + 2 Children',
+            'curebharat-suraksha special': 'Self + Spouse + 2 Children',
+          };
+          const normPlan = (customerData.planName || '').toLowerCase().trim();
+          customerData.membersCovered = planMap[normPlan] || customerData.membersCovered || '1';
+
           customerData.nomineeName = customerData.nomineeName || 'N/A';
           customerData.nomineeDob = formatDate(customerData.nomineeDob);
           customerData.relationship = customerData.relationship || 'N/A';
@@ -460,7 +472,7 @@ export default function CustomersPage() {
             if (!customerData.coveragePrice) customerData.coveragePrice = 0;
           }
           if (customerData.membersCovered) {
-            customerData.membersCovered = customerData.membersCovered.toString().replace(/[^0-9]/g, '');
+            customerData.membersCovered = customerData.membersCovered.toString();
           }
 
           parsedCustomers.push(customerData);

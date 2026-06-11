@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { HiOutlineArrowLeft, HiOutlineCheck } from 'react-icons/hi';
@@ -29,7 +29,7 @@ const initialForm: Omit<ICustomer, '_id' | 'createdAt' | 'updatedAt'> = {
   planEnd: '',
   coverageDetails: '',
   coveragePrice: 0,
-  membersCovered: 1,
+  membersCovered: '1',
   status: 'active',
 };
 
@@ -38,6 +38,26 @@ export default function CustomerForm({ customer, isEdit }: CustomerFormProps) {
   const [form, setForm] = useState(customer || initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const planMembersMap: Record<string, string> = {
+    'curebharat-suraksha': '2A+2C',
+    'cb-sampoorna suraksha premium': 'Self + Spouse + 2 Children + 2 Parents',
+    'cb-sampoorna suraksha plus': 'Self + Spouse + 2 Children + 2 Parents',
+    'cb-suraksha special': 'Self + Spouse + 2 Children',
+    'curebharat sampoorna suraksha special': 'Self + Spouse + 2 Children',
+    'curebharat-suraksha special': 'Self + Spouse + 2 Children',
+  };
+  
+  useEffect(() => {
+    if (form.planName) {
+      const normalizedPlan = form.planName.toLowerCase().trim();
+      // Match against the map (or fallback to empty if we want to allow manual input for unknown plans)
+      const mappedValue = planMembersMap[normalizedPlan];
+      if (mappedValue && form.membersCovered !== mappedValue) {
+        setForm(prev => ({ ...prev, membersCovered: mappedValue }));
+      }
+    }
+  }, [form.planName]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -110,7 +130,7 @@ export default function CustomerForm({ customer, isEdit }: CustomerFormProps) {
         { name: 'planStart', label: 'Plan Start Date', type: 'date', required: true },
         { name: 'planEnd', label: 'Plan End Date', type: 'date', required: true },
         { name: 'coveragePrice', label: 'Coverage Price (₹)', type: 'number', required: true },
-        { name: 'membersCovered', label: 'Members Covered', type: 'number', required: true },
+        { name: 'membersCovered', label: 'Members Covered', type: 'text', required: true, readOnly: true },
         { name: 'coverageDetails', label: 'Coverage Details', type: 'textarea' },
         { name: 'status', label: 'Status', type: 'select', options: ['active', 'inactive', 'expired'] },
       ],
@@ -193,9 +213,10 @@ export default function CustomerForm({ customer, isEdit }: CustomerFormProps) {
                       type={field.type}
                       value={(form as Record<string, unknown>)[field.name] as string}
                       onChange={handleChange}
-                      className="input"
+                      className={`input ${(field as any).readOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                       placeholder={field.placeholder}
                       required={field.required}
+                      readOnly={(field as any).readOnly}
                     />
                   )}
                 </div>
