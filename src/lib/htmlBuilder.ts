@@ -27,8 +27,8 @@ export function compilePlaceholders(text: string, customer: ICustomer): string {
     '{{plan_name}}': customer.planName || '',
     '{{plan_start}}': formatDateDDMMYYYY(customer.planStart),
     '{{plan_end}}': formatDateDDMMYYYY(customer.planEnd),
-    '{{plan_price}}': customer.coveragePrice?.toString() || '',
-    '{{coverage_price}}': customer.coveragePrice?.toString() || '',
+    '{{plan_price}}': customer.coveragePrice ? `₹${customer.coveragePrice} + GST` : '',
+    '{{coverage_price}}': customer.coveragePrice ? `₹${customer.coveragePrice} + GST` : '',
     '{{members_covered}}': customer.membersCovered?.toString() || '',
     '{{coverage_details}}': customer.coverageDetails || '',
   };
@@ -44,7 +44,26 @@ export function buildPageHtml(page: ITemplatePage, customer: ICustomer, pageNum:
   const bgCss = buildBackgroundCss(page);
 
   if (page.html) {
-    const parsedHtml = normalizeFullPageHtml(compilePlaceholders(page.html, customer));
+  let parsedHtml = compilePlaceholders(page.html, customer);
+  
+  // Dynamically format the plan price with Rupee symbol and + GST
+  if (customer.coveragePrice) {
+    const formattedPrice = `₹${customer.coveragePrice} + GST`;
+    parsedHtml = parsedHtml.replace(/:  0<\/div>/g, `: ${formattedPrice}</div>`);
+    parsedHtml = parsedHtml.replace(/: 0<\/div>/g, `: ${formattedPrice}</div>`);
+    // Also catch if the template had the price hardcoded directly instead of 0
+    parsedHtml = parsedHtml.replace(new RegExp(`:  ${customer.coveragePrice}</div>`, 'g'), `: ${formattedPrice}</div>`);
+    parsedHtml = parsedHtml.replace(new RegExp(`: ${customer.coveragePrice}</div>`, 'g'), `: ${formattedPrice}</div>`);
+  }
+
+  if (customer.membersCovered) {
+    parsedHtml = parsedHtml.replace(/:  1<\/div>/g, `: ${customer.membersCovered}</div>`);
+    parsedHtml = parsedHtml.replace(/: 1<\/div>/g, `: ${customer.membersCovered}</div>`);
+    parsedHtml = parsedHtml.replace(/:  2A\+2C<\/div>/g, `: ${customer.membersCovered}</div>`);
+    parsedHtml = parsedHtml.replace(/: 2A\+2C<\/div>/g, `: ${customer.membersCovered}</div>`);
+  }
+
+  parsedHtml = normalizeFullPageHtml(parsedHtml);
     return `<div class="pdf-page pdf-page--html" style="${bgCss}">${parsedHtml}</div>`;
   }
 
@@ -341,8 +360,8 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
       page.html &&
       page.html.length > 15000 &&
       page.pageType !== 'terms' &&
-      page.pageType !== 'html' &&
-      page.pageType !== 'certificate'
+      page.pageType !== 'certificate' &&
+      !page.html.includes('CERTIFICATE OF COVERAGE')
     );
 
     if (shouldPaginateRawHtml) {
@@ -523,9 +542,9 @@ export function buildFullHtml(pages: ITemplatePage[], customer: ICustomer): stri
   .cb-icon { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; background: #0B5D2A; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
   .cb-icon svg { width: 11px; height: 11px; fill: white; }
   .cb-icon.orange { background: #E8742A; }
-  .cb-lbl { font-size: 11.5px; color: #333; white-space: nowrap; padding-top: 2px; }
-  .cb-sep { font-size: 11.5px; color: #333; padding-top: 2px; margin: 0 6px; font-weight: 700; }
-  .cb-val { font-size: 12.5px; font-weight: 700; color: #1a1a1a; padding-top: 1px; }
+  .cb-lbl { font-size: 11.5px; color: #333; white-space: nowrap; padding-top: 2px; flex-shrink: 0; }
+  .cb-sep { font-size: 11.5px; color: #333; padding-top: 2px; margin: 0 6px; font-weight: 700; flex-shrink: 0; }
+  .cb-val { font-size: 12.5px; font-weight: 700; color: #1a1a1a; padding-top: 1px; min-width: 0; }
 
   /* --- Section Header Bar --- */
   .cb-section-hdr { background: #0B5D2A; color: white; padding: 8px 16px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; border-radius: 10px 10px 0 0; letter-spacing: 0.5px; }
