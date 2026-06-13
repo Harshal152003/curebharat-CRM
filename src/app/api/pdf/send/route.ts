@@ -2,10 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Customer from '@/models/Customer';
 import Template from '@/models/Template';
-import { buildFullHtml } from '@/lib/htmlBuilder';
-import { generatePdfFromHtml } from '@/lib/pdfEngine';
-import { getPdfSafeTemplatePages } from '@/lib/templatePdfPages';
-import nodemailer from 'nodemailer';
+import { emailQueue } from '@/lib/emailQueue';
 
 export async function POST(request: Request) {
   try {
@@ -67,73 +64,54 @@ export async function POST(request: Request) {
       console.error('[Generate PDF] Error fetching GBM KYC data:', err);
     }
 
+    const finalPlanName = template.name || customer.planName || '';
+    
+    // Map the plan names to their actual prices
+    let coveragePrice = 0;
+    if (finalPlanName.includes('Suraksha Special')) coveragePrice = 1499;
+    else if (finalPlanName.includes('Super Suraksha')) coveragePrice = 1999;
+    else if (finalPlanName.includes('Sampoorna Suraksha Premium')) coveragePrice = 4999;
+    else if (finalPlanName.includes('Sampoorna Suraksha Plus')) coveragePrice = 3999;
+    else if (finalPlanName.includes('Sampoorna Suraksha')) coveragePrice = 2999;
+    else if (finalPlanName.includes('Curebharat-Suraksha')) coveragePrice = 999;
+
+    let membersCovered = '1';
+    const normalizedPlan = finalPlanName.toLowerCase();
+    if (normalizedPlan.includes('sampoorna suraksha premium') || normalizedPlan.includes('sampoorna suraksha plus')) {
+      membersCovered = 'Self + Spouse + 2 Children + 2 Parents';
+    } else if (normalizedPlan.includes('suraksha special') || normalizedPlan.includes('sampoorna suraksha')) {
+      membersCovered = 'Self + Spouse + 2 Children';
+    } else if (normalizedPlan.includes('curebharat-suraksha') || normalizedPlan.includes('cb-suraksha')) {
+      membersCovered = '2A+2C';
+    }
+
     const customerData = {
       ...(customer as any),
-      planName: template.name || customer.planName || '',
+      planName: finalPlanName,
+      coveragePrice: coveragePrice,
+      membersCovered: membersCovered,
       ...gbmKycData
     };
 
-    // 1. Build HTML from template + customer data
-    const pdfPages = getPdfSafeTemplatePages(
-      template.name,
-      (template.pages || []) as unknown as import('@/types').ITemplatePage[]
-    );
-    const html = buildFullHtml(pdfPages, customerData as unknown as import('@/types').ICustomer);
-
-    // 2. Generate PDF
-    const pdfBuffer = await generatePdfFromHtml(html);
-
-    // 3. Configure Nodemailer
-    // NOTE: These should be in your .env.local
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL_USER || process.env.SMTP_USER, // Check both for compatibility
-        pass: process.env.EMAIL_PASS || process.env.SMTP_PASS, // Check both
-      },
+// src/app/api/pdf/send/route.ts
+// src/app/api/pdf/send/route.ts
+    // Queue the job to the robust background processor
+    emailQueue.addJob({
+      customer,
+      template,
+      customerData
     });
 
-    const fileName = `${customer.memberName.replace(/\s+/g, '-')}_Certificate.pdf`;
-    const senderEmail = process.env.SENDER_EMAIL || process.env.EMAIL_USER || process.env.SMTP_USER;
-
-    // 4. Send Email
-    const info = await transporter.sendMail({
-      from: `"${process.env.NEXT_PUBLIC_APP_NAME || 'CureBharat'}" <${senderEmail}>`,
-      to: customer.email,
-      subject: `Your ${template.name} Certificate from CureBharat`,
-      text: `Hello ${customer.memberName},\n\nPlease find your generated ${template.name} certificate attached to this email.\n\nBest regards,\nCureBharat Team`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-          <h2 style="color: #0d7c3e;">Hello ${customer.memberName},</h2>
-          <p>We are pleased to share your <strong>${template.name}</strong> certificate with you.</p>
-          <p>Please find the PDF document attached to this email for your records.</p>
-          <br />
-          <p style="color: #666; font-size: 14px;">If you have any questions, please feel free to contact us.</p>
-          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-          <p style="font-size: 12px; color: #999;">This is an automated message from ${process.env.NEXT_PUBLIC_APP_NAME || 'CureBharat CRM'}.</p>
-        </div>
-      `,
-      attachments: [
-        {
-          filename: fileName,
-          content: Buffer.from(pdfBuffer),
-        },
-      ],
-    });
-
-    console.log('Email sent: %s', info.messageId);
-
+    // Return immediately to the client
     return NextResponse.json({
       success: true,
-      message: 'Email sent successfully',
-      messageId: info.messageId,
+      message: "Email queued for background delivery. It will arrive shortly.",
+      messageId: 'queued_in_background',
     });
   } catch (error) {
-    console.error('Email sending error:', error);
+    console.error('Email route error:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to send email: ' + (error instanceof Error ? error.message : 'Unknown error') },
+      { success: false, error: 'Failed to initiate email task: ' + (error instanceof Error ? error.message : 'Unknown error') },
       { status: 500 }
     );
   }

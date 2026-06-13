@@ -1,19 +1,22 @@
-import puppeteer from 'puppeteer-core';
+import puppeteer, { Browser } from 'puppeteer-core';
 import chromium from '@sparticuz/chromium-min';
 
-export async function generatePdfFromHtml(html: string): Promise<Buffer> {
+// Keep a global browser instance alive to massively speed up generation
+let globalBrowser: Browser | null = null;
+
+async function getBrowser() {
+  if (globalBrowser && globalBrowser.isConnected()) {
+    return globalBrowser;
+  }
+
   const isProd = process.env.NODE_ENV === 'production';
-  
-  // Use a local chrome path if not in production
   const localChromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
-  // For Vercel, we use @sparticuz/chromium-min with a fallback URL to ensure it always works
-  // even if the local bin folder is missing after bundling.
   const executablePath = isProd 
     ? await chromium.executablePath('https://github.com/Sparticuz/chromium/releases/download/v132.0.0/chromium-v132.0.0-pack.tar') 
     : localChromePath;
 
-  const browser = await puppeteer.launch({
+  globalBrowser = await puppeteer.launch({
     args: isProd ? chromium.args : [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -24,14 +27,21 @@ export async function generatePdfFromHtml(html: string): Promise<Buffer> {
     headless: true,
   });
 
-  try {
-    const page = await browser.newPage();
+  return globalBrowser;
+}
 
+export async function generatePdfFromHtml(html: string): Promise<Buffer> {
+  const browser = await getBrowser();
+  const page = await browser.newPage();
+
+  try {
     // Set viewport to match A4 at 96dpi
     await page.setViewport({ width: 794, height: 1123 });
 
+    // Use domcontentloaded for speed. Since we have inline CSS and
+    // Puppeteer usually caches identical Cloudinary images locally, this is faster.
     await page.setContent(html, {
-      waitUntil: 'load',
+      waitUntil: 'load', 
       timeout: 30000,
     });
 
@@ -82,6 +92,7 @@ export async function generatePdfFromHtml(html: string): Promise<Buffer> {
 
     return Buffer.from(pdfBuffer);
   } finally {
-    await browser.close();
+    // ONLY close the page, keep the browser alive for the next task
+    await page.close();
   }
 }

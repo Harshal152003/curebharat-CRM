@@ -589,7 +589,8 @@ export async function POST() {
 
         <div style="margin-top: 80px; font-size: 8px; color: #666; line-height: 1.5;">
           *Protection Plan is only for the Primary Member age 18-65 Years in Good Health<br/>
-          ** Refer Terms & Conditions for coverage, claim and policy details
+          ** Refer Terms & Conditions for coverage, claim and policy details<br/>
+          *** Protection benefit facilitator- Go Digit General Insurance Ltd, IndusInd General Insurance Company Limited
         </div>
 
         <div style="margin-top: 40px; font-size: 11px; color: #333; line-height: 1.5;">

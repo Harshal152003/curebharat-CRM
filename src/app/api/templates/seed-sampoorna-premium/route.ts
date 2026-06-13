@@ -295,33 +295,39 @@ export async function POST() {
               <div style="flex: 1; display: flex; flex-direction: column; gap: 18px; min-width: 0;">
                 <div class="cb-field">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.user}</div>
-                  <div class="cb-lbl" style="width: 95px;">Member Name</div>
+                  <div class="cb-lbl" style="width: 110px; min-width: 110px;">Member Name</div>
                   <div class="cb-sep">:</div>
                   <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{member_name}}</div>
                 </div>
                 <div class="cb-field">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.user}</div>
-                  <div class="cb-lbl" style="width: 95px;">Member ID</div>
+                  <div class="cb-lbl" style="width: 110px; min-width: 110px;">Member ID</div>
                   <div class="cb-sep">:</div>
                   <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{member_id}}</div>
                 </div>
                 <div class="cb-field">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.calendar}</div>
-                  <div class="cb-lbl" style="width: 95px;">Date of Birth</div>
+                  <div class="cb-lbl" style="width: 110px; min-width: 110px;">Date of Birth</div>
                   <div class="cb-sep">:</div>
                   <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{dob}}</div>
                 </div>
                 <div class="cb-field">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.users}</div>
-                  <div class="cb-lbl" style="width: 95px;">Gender</div>
+                  <div class="cb-lbl" style="width: 110px; min-width: 110px;">Gender</div>
                   <div class="cb-sep">:</div>
                   <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{gender}}</div>
                 </div>
                 <div class="cb-field">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.email}</div>
-                  <div class="cb-lbl" style="width: 95px;">Email ID</div>
+                  <div class="cb-lbl" style="width: 110px; min-width: 110px;">Email ID</div>
                   <div class="cb-sep">:</div>
-                  <div class="cb-val" style="flex: 1; word-break: break-all; word-wrap: break-word;">{{email}}</div>
+                  <div class="cb-val" style="flex: 1; min-width: 0; word-break: break-all; overflow-wrap: anywhere;">{{email}}</div>
+                </div>
+                <div class="cb-field" style="margin-top: 15px;">
+                  <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.location}</div>
+                  <div class="cb-lbl" style="width: 110px; min-width: 110px;">Address</div>
+                  <div class="cb-sep">:</div>
+                  <div class="cb-val" style="flex: 1; word-wrap: break-word; font-weight: 700; font-size: 11.5px; line-height: 1.4;">{{address}}</div>
                 </div>
               </div>
               
@@ -334,12 +340,7 @@ export async function POST() {
                   <div class="cb-sep">:</div>
                   <div class="cb-val" style="flex: 1; word-wrap: break-word;">{{phone}}</div>
                 </div>
-                <div class="cb-field">
-                  <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.location}</div>
-                  <div class="cb-lbl" style="width: 120px;">Address</div>
-                  <div class="cb-sep">:</div>
-                  <div class="cb-val" style="flex: 1; word-wrap: break-word; font-weight: 700; font-size: 11.5px; line-height: 1.4;">{{address}}</div>
-                </div>
+                
                 <div class="cb-field" style="margin-top: 15px;">
                   <div class="cb-icon" style="background: #0B5D2A; fill: white; border-radius: 50%; padding: 4px; box-sizing: border-box; width: 22px; height: 22px;">${icons.user}</div>
                   <div class="cb-lbl" style="width: 120px;">Nominee Name</div>

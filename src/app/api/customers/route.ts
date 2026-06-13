@@ -14,6 +14,12 @@ export async function GET(request: Request) {
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
     const filterType = searchParams.get('filterType') || 'all';
+    
+    // New filters
+    const planName = searchParams.get('planName') || '';
+    const importDate = searchParams.get('importDate') || '';
+    const coverageStart = searchParams.get('coverageStart') || '';
+    const coverageEnd = searchParams.get('coverageEnd') || '';
 
     const skip = (page - 1) * limit;
 
@@ -32,8 +38,28 @@ export async function GET(request: Request) {
       });
     }
 
-    if (status) {
+    if (status && status !== 'all') {
       filter.status = status;
+    }
+
+    if (planName) {
+      filter.planName = { $regex: planName, $options: 'i' };
+    }
+
+    if (importDate) {
+      const start = new Date(importDate);
+      start.setUTCHours(0, 0, 0, 0);
+      const end = new Date(importDate);
+      end.setUTCHours(23, 59, 59, 999);
+      filter.createdAt = { $gte: start, $lte: end };
+    }
+
+    if (coverageStart) {
+      filter.planStart = coverageStart;
+    }
+
+    if (coverageEnd) {
+      filter.planEnd = coverageEnd;
     }
 
     if (filterType === 'incomplete' || filterType === 'complete') {

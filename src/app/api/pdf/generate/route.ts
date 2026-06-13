@@ -52,10 +52,32 @@ export async function POST(request: Request) {
       console.error('[Generate PDF] Error fetching GBM KYC data:', err);
     }
 
-    // Build HTML from template + customer data (override/ensure planName matches the selected template)
+    const finalPlanName = template.name || customer.planName || '';
+    
+    // Map the plan names to their actual prices
+    let coveragePrice = 0;
+    if (finalPlanName.includes('Suraksha Special')) coveragePrice = 1499;
+    else if (finalPlanName.includes('Super Suraksha')) coveragePrice = 1999;
+    else if (finalPlanName.includes('Sampoorna Suraksha Premium')) coveragePrice = 4999;
+    else if (finalPlanName.includes('Sampoorna Suraksha Plus')) coveragePrice = 3999;
+    else if (finalPlanName.includes('Sampoorna Suraksha')) coveragePrice = 2999;
+    else if (finalPlanName.includes('Curebharat-Suraksha')) coveragePrice = 999;
+
+    let membersCovered = '1';
+    const normalizedPlan = finalPlanName.toLowerCase();
+    if (normalizedPlan.includes('sampoorna suraksha premium') || normalizedPlan.includes('sampoorna suraksha plus')) {
+      membersCovered = 'Self + Spouse + 2 Children + 2 Parents';
+    } else if (normalizedPlan.includes('suraksha special') || normalizedPlan.includes('sampoorna suraksha')) {
+      membersCovered = 'Self + Spouse + 2 Children';
+    } else if (normalizedPlan.includes('curebharat-suraksha') || normalizedPlan.includes('cb-suraksha')) {
+      membersCovered = '2A+2C';
+    }
+
     const customerData = {
       ...(customer as any),
-      planName: template.name || customer.planName || '',
+      planName: finalPlanName,
+      coveragePrice: coveragePrice,
+      membersCovered: membersCovered,
       ...gbmKycData
     };
 

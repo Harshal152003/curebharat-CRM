@@ -1,5 +1,5 @@
 
-const logoUrl = 'https://www.curebharat.com/Logo.png';
+const logoUrl = 'https://res.cloudinary.com/dukua47wj/image/upload/v1781334213/6b4c8003-8aef-4cb4-a656-256a84618bae.png';
 
 function pageShell(
   pageNumber: number,
@@ -1297,5 +1297,22 @@ export const termsSurakshaFinalPagesHtml: string[] = [
   pageShell(35, `
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">15. User tracking information such as, but not limited to, device ID, Advertising ID, etc.</div>
 <div style="font-weight: 700; color: #0B5D2A; margin-top: 16px; margin-bottom: 8px; font-size: 13px;">16. Any other information willingly shared by you</div>
+<div style="margin-top: 320px; text-align: center; font-weight: 800; font-size: 18px; color: #0B5D2A;">
+  Thank You for choosing CureBharat.
+</div>
+
+
+<img src="https://res.cloudinary.com/dukua47wj/image/upload/v1781334213/6b4c8003-8aef-4cb4-a656-256a84618bae.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 450px; opacity: 0.08; z-index: 0; pointer-events: none;" />
+<div style="position: absolute; bottom: 90px; left: 45px; right: 45px; font-size: 11px; line-height: 1.6; color: #444; text-align: center; border-top: 1px solid #ccc; padding-top: 20px; background: #fff; z-index: 10;">
+  <strong>Company Name:</strong> CUREBHARAT WELLNESS PRIVATE LIMITED<br/>
+  <strong>Address:</strong> CureBharat Wellness Private Limited, 6th Floor, Lightbridge, Hiranandani Business Park, Andheri East, Mumbai - 400072<br/>
+  <strong>CIN Number:</strong> U86900MH2026PTC467036<br/>
+  <strong>GST Number:</strong> 27AANCC5024C1ZX<br/>
+  <strong>PAN:</strong> AANCC5024C*<br/>
+  <strong>TAN:</strong> MUMC33859A*<br/>
+  <strong>UDHYAM:</strong> UDYAM-MH-18-0553626<br/>
+  <strong>Contact Us:</strong> +91 22-44512860 | <strong>Email:</strong> contactus@curebharat.com
+</div>
+
 `), 
 ];

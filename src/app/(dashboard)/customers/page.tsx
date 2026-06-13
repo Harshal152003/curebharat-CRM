@@ -26,6 +26,13 @@ export default function CustomersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterDataStatus, setFilterDataStatus] = useState('all');
+  const [filterPlanName, setFilterPlanName] = useState('');
+  const [filterImportDate, setFilterImportDate] = useState('');
+  const [filterCoverageStart, setFilterCoverageStart] = useState('');
+  const [filterCoverageEnd, setFilterCoverageEnd] = useState('');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -37,6 +44,7 @@ export default function CustomersPage() {
   const [bulkSendProgress, setBulkSendProgress] = useState<{current: number, total: number, success: number, fail: number} | null>(null);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
+  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -58,7 +66,12 @@ export default function CustomersPage() {
         page: page.toString(),
         limit: '10',
         ...(search && { search }),
-        ...(filterStatus !== 'all' && { filterType: filterStatus })
+        ...(filterDataStatus !== 'all' && { filterType: filterDataStatus }),
+        ...(filterStatus !== 'all' && { status: filterStatus }),
+        ...(filterPlanName && { planName: filterPlanName }),
+        ...(filterImportDate && { importDate: filterImportDate }),
+        ...(filterCoverageStart && { coverageStart: filterCoverageStart }),
+        ...(filterCoverageEnd && { coverageEnd: filterCoverageEnd }),
       });
       const res = await fetch(`/api/customers?${params}`);
       const data = await res.json();
@@ -71,9 +84,8 @@ export default function CustomersPage() {
       console.error('Failed to fetch customers:', error);
     } finally {
       setLoading(false);
-      // Removed setSelectedCustomerIds([]) so selection persists across pages
     }
-  }, [page, search, filterStatus]);
+  }, [page, search, filterDataStatus, filterStatus, filterPlanName, filterImportDate, filterCoverageStart, filterCoverageEnd]);
 
   useEffect(() => {
     fetchCustomers();
@@ -188,7 +200,7 @@ export default function CustomersPage() {
 
       const data = await res.json();
       if (data.success) {
-        alert('Certificate sent successfully to ' + customer.email);
+        alert(data.message || ('Certificate sent successfully to ' + customer.email));
       } else {
         alert('Failed to send email: ' + data.error);
       }
@@ -197,6 +209,25 @@ export default function CustomersPage() {
       alert('An error occurred while sending the email');
     } finally {
       setSendingEmail(null);
+    }
+  };
+
+  const handleSyncGBM = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch('/api/customers/sync', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message);
+        fetchCustomers();
+      } else {
+        alert('Sync failed: ' + data.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while syncing.');
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -223,7 +254,17 @@ export default function CustomersPage() {
 
   const handleSelectAllGlobally = async () => {
     try {
-      const res = await fetch(`/api/customers?limit=100000&search=${encodeURIComponent(search)}&filterType=${filterStatus}`);
+      const params = new URLSearchParams({
+        limit: '100000',
+        ...(search && { search }),
+        ...(filterDataStatus !== 'all' && { filterType: filterDataStatus }),
+        ...(filterStatus !== 'all' && { status: filterStatus }),
+        ...(filterPlanName && { planName: filterPlanName }),
+        ...(filterImportDate && { importDate: filterImportDate }),
+        ...(filterCoverageStart && { coverageStart: filterCoverageStart }),
+        ...(filterCoverageEnd && { coverageEnd: filterCoverageEnd }),
+      });
+      const res = await fetch(`/api/customers?${params}`);
       const data = await res.json();
       if (data.success) {
         setSelectedCustomerIds(data.data.map((c: any) => c._id));
@@ -568,8 +609,21 @@ export default function CustomersPage() {
           <p className="page-subtitle">{total} total customers</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            className="btn btn-secondary" 
+            onClick={handleSyncGBM} 
+            disabled={isSyncing}
+            style={{ position: 'relative' }}
+          >
+            {isSyncing ? (
+               <span className="spinner" style={{ width: 14, height: 14, border: '2px solid rgba(0,0,0,0.2)', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }}></span>
+            ) : (
+               <HiOutlineUpload size={18} />
+            )}
+            {isSyncing ? 'Syncing...' : 'Sync with GBM'}
+          </button>
           <label className="btn btn-secondary" style={{ cursor: 'pointer' }}>
-            <HiOutlineUpload size={18} />
+            <HiOutlineDocumentText size={18} />
             Import Data
             <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" hidden onChange={handleImport} />
           </label>
@@ -595,10 +649,10 @@ export default function CustomersPage() {
           <select 
             className="input search-input" 
             style={{ maxWidth: '180px', cursor: 'pointer' }}
-            value={filterStatus}
-            onChange={e => setFilterStatus(e.target.value)}
+            value={filterDataStatus}
+            onChange={e => setFilterDataStatus(e.target.value)}
           >
-            <option value="all">All Customers</option>
+            <option value="all">Complete & Incomplete</option>
             <option value="incomplete">Incomplete Data</option>
             <option value="complete">Complete Data</option>
           </select>
@@ -617,7 +671,64 @@ export default function CustomersPage() {
           <button type="submit" className="btn btn-primary btn-sm">
             Search
           </button>
+          <button 
+            type="button" 
+            className="btn btn-secondary btn-sm" 
+            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+          >
+            Filters {showAdvancedFilters ? '▲' : '▼'}
+          </button>
         </form>
+
+        {showAdvancedFilters && (
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '16px', paddingTop: '16px', borderTop: '1px dashed var(--border)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--foreground-dim)', textTransform: 'uppercase' }}>Plan Name</label>
+              <select className="input input-sm" value={filterPlanName} onChange={e => setFilterPlanName(e.target.value)} style={{ width: '180px' }}>
+                <option value="">All Plans</option>
+                {templates.map(t => (
+                  <option key={t._id} value={t.name}>{t.name}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--foreground-dim)', textTransform: 'uppercase' }}>Account Status</label>
+              <select className="input input-sm" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ width: '140px' }}>
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="expired">Expired</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--foreground-dim)', textTransform: 'uppercase' }}>Import Date</label>
+              <input type="date" className="input input-sm" value={filterImportDate} onChange={e => setFilterImportDate(e.target.value)} />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--foreground-dim)', textTransform: 'uppercase' }}>Coverage Start</label>
+              <input type="date" className="input input-sm" value={filterCoverageStart} onChange={e => setFilterCoverageStart(e.target.value)} />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--foreground-dim)', textTransform: 'uppercase' }}>Coverage End (Expiring)</label>
+              <input type="date" className="input input-sm" value={filterCoverageEnd} onChange={e => setFilterCoverageEnd(e.target.value)} />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <button className="btn btn-primary btn-sm" onClick={() => { setPage(1); fetchCustomers(); }}>Apply Filters</button>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <button className="btn btn-secondary btn-sm" onClick={() => { 
+                setFilterPlanName(''); setFilterStatus('all'); setFilterImportDate(''); setFilterCoverageStart(''); setFilterCoverageEnd(''); 
+                setTimeout(() => fetchCustomers(), 0); 
+              }}>Clear</button>
+            </div>
+          </div>
+        )}
+
         {selectedCustomerIds.length > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
             <span style={{ fontSize: '14px', color: 'var(--foreground-dim)' }}>
